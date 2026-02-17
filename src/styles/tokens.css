@@ -1,0 +1,61 @@
+:root {
+  /* Colors - Paper / Newspaper */
+  --paper: #F3EBDD;
+  --paper-2: #EDE2D1;
+  --newsprint: #E8E0D5;
+  --aged-paper: #D4C4B0;
+
+  /* Colors - Ink */
+  --ink: #151515;
+  --ink-2: #2B2B2B;
+  --muted: #6A6A6A;
+  --newspaper-ink: #1A1A1A;
+
+  /* Colors - Pop */
+  --pop-orange: #D94A2A;
+  --pop-mustard: #E4B12C;
+  --pop-blue: #2E5BFF;
+
+  /* Colors - Leather Nav */
+  --leather: #6B4423;
+  --leather-dark: #5A3618;
+  --leather-light: #8B6342;
+  --leather-2: #6A3B2A;
+  --stitch: #D4A574;
+  --stitch-shadow: #9B7A54;
+
+  /* Colors - Signal */
+  --signal-red: #FF3B30;
+
+  /* Borders */
+  --border: rgba(21, 21, 21, 0.12);
+  --border-strong: rgba(21, 21, 21, 0.22);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.14);
+
+  /* Border Radius */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-pill: 999px;
+
+  /* Container */
+  --container: 1120px;
+
+  /* Typography - Fonts */
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-display: 'Archivo Black', 'Impact', sans-serif;
+
+  /* Typography - Sizes */
+  --h1: clamp(40px, 5vw, 64px);
+  --h2: clamp(28px, 3.2vw, 40px);
+  --h3: 22px;
+  --body: 16px;
+  --small: 13px;
+
+  /* Typography - Line Heights */
+  --lh-tight: 1.05;
+  --lh: 1.5;
+}

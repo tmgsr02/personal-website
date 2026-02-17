@@ -1,0 +1,36 @@
+---
+title: "Early Warning Systems: Less Firefighting, More Control"
+date: "2026-01-01"
+summary: "A practical framework for detecting KPI degradation early without triggering false alarms."
+tags: [Supply Chain, ML, Monitoring]
+---
+
+## The Problem with Retrospective KPIs
+
+Most supply chain teams learn about KPI degradation the same way — someone opens a report on Monday morning and notices the number is already red. By the time you see it, the damage is done. The root cause happened days or weeks earlier, and now you're in firefighting mode.
+
+I've seen this pattern across multiple organizations: teams that are technically data-rich but operationally reactive. The data exists to catch problems early, but the reporting infrastructure is designed to summarize the past, not predict the near future.
+
+## What an Early Warning System Actually Does
+
+An early warning system sits between raw operational data and your existing reporting layer. It doesn't replace dashboards — it augments them with a forward-looking signal. The goal is simple: tell the team 'this metric is likely to breach its target within N days' before the breach actually happens.
+
+The core components are straightforward. You need a feature layer that captures leading indicators — things like order velocity changes, supplier lead-time drift, and fulfillment pattern shifts. You need a model that can distinguish genuine degradation from normal variance. And you need an alert mechanism that doesn't cry wolf.
+
+## Choosing the Right Sensitivity
+
+The hardest design decision isn't the model — it's the threshold. Too sensitive and the team ignores alerts within a week. Too conservative and you're back to catching problems after the fact.
+
+The approach I've found effective is to start with a higher threshold (fewer, more confident alerts) and gradually tune downward based on feedback. It's easier to earn trust with a system that's occasionally silent than one that's constantly noisy.
+
+I also recommend separating alerts by severity. A 'watch' signal means something has shifted and is worth monitoring. A 'warning' signal means intervention is likely needed. This gives teams a graduated response instead of a binary alarm.
+
+## Implementation Notes
+
+For the model layer, gradient-boosted classifiers (XGBoost) work well because they handle mixed feature types, train fast, and are interpretable enough for stakeholders to trust. The features that matter most are usually rate-of-change metrics rather than absolute values.
+
+On the system side, keep it simple. A FastAPI service that runs predictions on a schedule, writes results to a table, and surfaces them in your existing BI tool is often enough. Resist the urge to build a separate monitoring dashboard — meet the team where they already look.
+
+## The Payoff
+
+When it works, the shift is tangible. Instead of 'why did fill rate drop last week?' the conversation becomes 'fill rate is trending down in Region X — here's what's driving it and here's what we can do now.' That shift from reactive to proactive is what separates reporting from decision systems.

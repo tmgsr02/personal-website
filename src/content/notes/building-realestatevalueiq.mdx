@@ -1,0 +1,38 @@
+---
+title: "Building RealEstateValueIQ"
+date: "2025-11-20"
+summary: "Notes on product decisions, data sources, and lessons from early user feedback."
+tags: [Product, Next.js, Startups]
+---
+
+## Why This Product
+
+RealEstateValueIQ started from a personal frustration: evaluating rental properties involves pulling data from five different sources, running the same spreadsheet calculations every time, and still not having a clear picture of whether a deal makes sense.
+
+I wanted to build the tool I wished existed — something that combines property data, market context, and financial modeling into a single workflow. Not a platform that tries to replace due diligence, but one that makes the first-pass evaluation fast and reliable.
+
+## Key Product Decisions
+
+The first decision was scope. It's tempting to build a full-featured platform, but I intentionally started narrow: deal evaluation for small multifamily properties in specific markets. This constraint forced focus and made the MVP achievable as a solo builder.
+
+The second decision was data strategy. Rather than trying to build a proprietary dataset from day one, I focused on integrating public data sources and making them more usable. The value isn't in having data nobody else has — it's in structuring the analysis workflow so that existing data becomes actionable faster.
+
+The third was tech stack. Next.js with Supabase gives me server-side rendering for SEO, a real database for user data, and auth out of the box. I chose tools I could move fast with rather than tools that would scale to millions of users. Premature scaling is a startup killer.
+
+## What I Learned from Early Users
+
+The biggest surprise was that users cared more about the scoring logic transparency than the score itself. They didn't want a black-box number — they wanted to understand the inputs and adjust assumptions. This led me to redesign the results page to show the full calculation breakdown.
+
+Another lesson: users who are actively deal-hunting have very different needs from users who are casually browsing. The active users want speed and specificity. The casual users want education and exploration. Trying to serve both equally in the same interface creates a muddled experience.
+
+## Technical Challenges
+
+Data freshness is a constant tension. Public property data can be weeks or months stale, and market conditions change. I implemented a staleness indicator that shows users how recent each data point is, which turned out to be more valuable than trying to guarantee freshness.
+
+Performance was another focus area. Financial calculators need to feel instant — any perceptible lag breaks the user's analytical flow. I moved most calculations to the client side and pre-computed market comparisons server-side during data ingestion.
+
+## What's Next
+
+The roadmap is driven by user feedback, not feature wishlists. The most requested capability is portfolio-level analysis — being able to evaluate multiple properties as a group and understand concentration risk. That's the next major feature.
+
+I'm also exploring how LLMs can help with the qualitative side of deal evaluation — summarizing neighborhood trends, extracting insights from listing descriptions, and generating due diligence checklists. The goal is augmentation, not automation.
