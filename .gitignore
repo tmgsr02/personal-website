@@ -48,3 +48,6 @@ next-env.d.ts
 
 # Claude Code
 .claude/
+
+# Source photos used as image_gen likeness references (not published)
+assets/reference-portraits/
