@@ -1,5 +1,15 @@
 @import '../styles/tokens.css';
 
+/* Bridge next/font's generated variables into the token families.
+   Deliberately OUTSIDE @layer base: tokens.css is unlayered, and unlayered
+   declarations beat layered ones regardless of source order. Inside a layer
+   this block would lose to tokens.css and next/font would never apply. */
+:root {
+  --font-display: var(--font-display-loaded), 'Didot', Georgia, serif;
+  --font-body: var(--font-body-loaded), Georgia, serif;
+  --font-mono: var(--font-mono-loaded), 'Courier New', monospace;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,128 +27,76 @@
 
   body {
     position: relative;
+    min-height: 100vh;
     background-color: var(--paper);
-    color: var(--newspaper-ink);
-    font-family: var(--font-mono);
+    color: var(--text);
+    font-family: var(--font-body);
     font-size: var(--body);
     line-height: var(--lh);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Retro newspaper background pattern */
-    background-image:
-      repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 1px,
-        rgba(0,0,0,0.015) 1px,
-        rgba(0,0,0,0.015) 2px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 1px,
-        rgba(0,0,0,0.01) 1px,
-        rgba(0,0,0,0.01) 2px
-      );
   }
 
-  /* Newspaper texture overlay with halftone dots */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-      radial-gradient(circle, rgba(0,0,0,0.08) 0.5px, transparent 0.5px),
-      url(/textures/paper-fiber.png);
-    background-size: 4px 4px, auto;
-    background-repeat: repeat;
-    opacity: 0.15;
-    mix-blend-mode: multiply;
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* Aged paper effect */
+  /* Paper grain. SVG turbulence, not a raster: smaller and resolution
+     independent. Sits above the page, below nothing interactive. */
   body::after {
     content: '';
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(
-      ellipse at center,
-      transparent 0%,
-      rgba(212, 196, 176, 0.1) 100%
-    );
+    inset: 0;
     pointer-events: none;
-    z-index: 9998;
+    z-index: 1;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
   }
 
-  /* Focus styles for accessibility */
-  *:focus-visible {
-    outline: 2px solid var(--signal-red);
-    outline-offset: 2px;
-  }
-
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-  }
-
-  /* Container utility */
-  .container {
-    max-width: var(--container);
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-
-  @media (min-width: 768px) {
-    .container {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
-
-  /* Heading styles */
-  h1 {
+  h1, h2, h3 {
     font-family: var(--font-display);
-    font-size: var(--h1);
+    color: var(--ink-blue);
     line-height: var(--lh-tight);
-    font-weight: 900;
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
   }
 
-  h2 {
-    font-family: var(--font-display);
-    font-size: var(--h2);
-    line-height: var(--lh-tight);
-    font-weight: 900;
-  }
+  h1 { font-size: var(--display-xl); }
+  h2 { font-size: var(--h2); }
+  h3 { font-size: var(--h3); font-weight: 500; }
 
-  h3 {
-    font-family: var(--font-display);
-    font-size: var(--h3);
-    line-height: var(--lh-tight);
-    font-weight: 900;
-  }
+  p { text-wrap: pretty; }
 
-  /* Link styles */
   a {
     color: inherit;
     text-decoration: none;
-    transition: all 0.2s ease;
   }
 
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion resolves to the FINAL state instantly, rather than
+     merely shortening durations. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .container {
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Wide-tracked mono caps label. The site's connective tissue. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--ink-blue);
+  }
 }
