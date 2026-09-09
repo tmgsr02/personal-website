@@ -2,6 +2,7 @@
 
 **Date:** 2026-09-09
 **Status:** Approved (design), pending implementation plan
+**Assets:** Generated and staged in `public/engravings/` (12/12)
 **Supersedes:** `design.md` ("Analog Pop Craft")
 
 ---
@@ -177,9 +178,36 @@ independent.
 
 ### 4.3 Optimisation
 
-Post-generation, each PNG is converted to WebP at quality 82 and the PNG is
-discarded. Budget: **under 180KB per plate**, under 1.4MB for the full set.
-An asset that cannot meet the budget is regenerated, not shipped oversized.
+Post-generation, each PNG is converted to WebP with `cwebp` (Homebrew;
+`sips` cannot write WebP on this machine) and the PNG is discarded. Typical
+gain is 20-25x — a 1.25MB PNG lands at ~49KB.
+
+Budget: **under 180KB per plate**, under 1.4MB for the full set. Quality starts
+at 82 and steps down (74 / 66 / 58) until the plate fits; if it still does not
+fit, the plate is downscaled before quality is dropped further, because these
+are line drawings and quality loss shows as hatching mush long before it shows
+as softness.
+
+Achieved on the first run — all twelve plates inside budget:
+
+| Plate | Encode | Size |
+|---|---|---|
+| about-portrait | 1280px wide, q78 | 167KB |
+| home-hero | q58 | 170KB |
+| toronto-skyline | q74 | 168KB |
+| work-still-life | q74 | 166KB |
+| og-card | q82 | 126KB |
+| writing-still-life | q82 | 115KB |
+| notes-still-life | q82 | 89KB |
+| now-still-life | q82 | 76KB |
+| cap-applied-ai | q82 | 68KB |
+| cap-data-systems | q82 | 53KB |
+| cap-product-analytics | q82 | 51KB |
+| cap-building | q82 | 48KB |
+| **Total** | | **1301KB** |
+
+`about-portrait` is the only plate that needed downscaling; at full 1536px it
+would not go below 226KB at any acceptable quality.
 
 ### 4.4 Likeness
 
