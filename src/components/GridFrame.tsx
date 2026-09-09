@@ -43,17 +43,24 @@ export default function GridFrame({
     <div className="relative min-h-screen">
       {/* The frame. The <svg> box carries the inset in CSS; the rect uses
           plain percentage geometry so nothing depends on var() resolving
-          inside an SVG attribute. */}
+          inside an SVG attribute.
+
+          width/height are explicit calc() lengths rather than 'auto'.
+          <svg> is a CSS replaced element, so top+right+bottom+left with
+          width/height:auto does NOT stretch to fill the gap the way it
+          would for a plain <div> — it falls back to the UA's default
+          replaced-element size (300x150px), which was verified in a real
+          browser: the frame rendered as a small fixed 300x150 box pinned
+          to the top-left instead of tracing the viewport. Sizing it
+          explicitly sidesteps replaced-element auto-sizing entirely. */}
       <svg
         aria-hidden="true"
         className="pointer-events-none fixed z-0"
         style={{
           top: INSET,
-          right: INSET,
-          bottom: INSET,
           left: INSET,
-          width: 'auto',
-          height: 'auto',
+          width: 'calc(100% - 2 * var(--frame-inset))',
+          height: 'calc(100% - 2 * var(--frame-inset))',
           overflow: 'visible',
         }}
         fill="none"
