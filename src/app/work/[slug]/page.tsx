@@ -1,138 +1,131 @@
 import React from 'react';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { projects } from '@/content/site';
-import TapeLabelTag from '@/components/TapeLabelTag';
-import LeatherFooter from '@/components/LeatherFooter';
+import type { Metadata } from 'next';
+import GridFrame from '@/components/GridFrame';
+import SectionMarker from '@/components/SectionMarker';
+import { experience, projects } from '@/content/site';
 
 export async function generateStaticParams() {
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
+  return [
+    ...experience.map((e) => ({ slug: e.slug })),
+    ...projects.map((p) => ({ slug: p.slug })),
+  ];
 }
 
-interface CaseStudyPageProps {
-  params: Promise<{
-    slug: string;
-  }>;
+interface PageProps {
+  params: Promise<{ slug: string }>;
 }
 
-export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  const entry = experience.find((e) => e.slug === slug);
+  if (entry) return { title: entry.org, description: entry.summary };
+
+  const project = projects.find((p) => p.slug === slug);
+  if (project) return { title: project.title, description: project.outcome };
+
+  return {};
+}
+
+export default async function WorkDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const entry = experience.find((e) => e.slug === slug);
   const project = projects.find((p) => p.slug === slug);
 
-  if (!project) {
-    notFound();
-  }
+  if (!entry && !project) notFound();
 
   return (
-    <>
-      <article className="container py-12 md:py-20">
-        {/* Header */}
-        <header className="mb-12">
-          <h1 className="font-[var(--font-display)] text-[var(--h1)] mb-4 leading-tight">
-            {project.title}
-          </h1>
-          <p className="text-[var(--h3)] text-[var(--ink-2)] font-mono mb-6">
-            {project.outcome}
-          </p>
+    <GridFrame>
+      <article className="container pb-20 pt-16 md:pt-24">
+        <SectionMarker index={1} label={entry ? 'Experience' : 'Case Study'} />
 
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2">
-            {project.tags.map((tag, index) => (
-              <TapeLabelTag key={tag} label={tag} rotate={index % 3 === 0} />
-            ))}
-          </div>
-        </header>
+        {entry && (
+          <>
+            <h1 className="mb-6 uppercase">{entry.org}</h1>
+            <p className="label mb-10 text-muted">
+              {entry.disciplines.join(' / ')} — {entry.period}
+            </p>
+            <p className="mb-14 max-w-prose text-[17px] leading-relaxed">
+              {entry.summary}
+            </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            <section>
-              <h2 className="font-[var(--font-display)] text-[var(--h2)] mb-4">Problem</h2>
-              <div className="prose prose-lg font-mono text-[var(--ink-2)] leading-relaxed">
-                {project.tracklist.data && (
-                  <p>
-                    Working with {project.tracklist.data.toLowerCase()}, the challenge was to build a system
-                    that could {project.outcome.toLowerCase().replace(/\.$/, '')} while maintaining reliability
-                    and actionable insights for the team.
-                  </p>
-                )}
-              </div>
-            </section>
+            {entry.projects.length > 0 && (
+              <section className="border-t border-rule pt-12">
+                <SectionMarker index={2} label="Projects" />
+                <ul className="grid gap-8 md:grid-cols-2">
+                  {entry.projects.map((projectSlug) => {
+                    const p = projects.find((x) => x.slug === projectSlug);
+                    if (!p) return null;
+                    return (
+                      <li key={p.slug} className="border-l border-rule-soft pl-5">
+                        <Link href={`/work/${p.slug}`} className="group block">
+                          <h3 className="mb-2 text-ink-blue">{p.title}</h3>
+                          <p className="mb-3 text-[15px] text-muted">
+                            {p.outcome}
+                          </p>
+                          <span className="label inline-flex items-center gap-2 text-accent">
+                            Open
+                            <span
+                              aria-hidden="true"
+                              className="transition-transform duration-micro ease-enter group-hover:translate-x-1"
+                            >
+                              &rarr;
+                            </span>
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            )}
+          </>
+        )}
 
-            <section>
-              <h2 className="font-[var(--font-display)] text-[var(--h2)] mb-4">Approach</h2>
-              <div className="prose prose-lg font-mono text-[var(--ink-2)] leading-relaxed">
-                {project.tracklist.model && (
-                  <p className="mb-4">
-                    <strong>Model:</strong> {project.tracklist.model}
-                  </p>
-                )}
-                {project.tracklist.system && (
-                  <p>
-                    <strong>System:</strong> {project.tracklist.system}
-                  </p>
-                )}
-              </div>
-            </section>
+        {project && (
+          <>
+            <h1 className="mb-6 uppercase">{project.title}</h1>
+            <p className="label mb-10 text-muted">{project.tags.join(' / ')}</p>
+            <p className="mb-14 max-w-prose text-[17px] leading-relaxed">
+              {project.outcome}
+            </p>
 
-            <section>
-              <h2 className="font-[var(--font-display)] text-[var(--h2)] mb-4">Results</h2>
-              <div className="prose prose-lg font-mono text-[var(--ink-2)] leading-relaxed">
-                {project.tracklist.impact && (
-                  <p>{project.tracklist.impact}</p>
-                )}
-              </div>
-            </section>
-          </div>
-
-          {/* Sidebar: Tracklist */}
-          <aside className="lg:col-span-1">
-            <div className="sticky top-24 bg-[var(--paper-2)] border-2 border-[var(--ink)] rounded-[var(--r-lg)] p-6">
-              <h3 className="font-[var(--font-display)] text-[var(--h3)] mb-6">
-                Tracklist
-              </h3>
-
-              <div className="space-y-4 text-[var(--small)] font-mono">
-                {project.tracklist.data && (
-                  <div>
-                    <span className="block text-[var(--muted)] uppercase tracking-wide mb-1">
-                      Data
-                    </span>
-                    <span className="text-[var(--ink-2)]">{project.tracklist.data}</span>
+            <dl className="grid gap-x-10 gap-y-8 border-t border-rule pt-12 md:grid-cols-2">
+              {(
+                [
+                  ['Data', project.tracklist.data],
+                  ['Model', project.tracklist.model],
+                  ['System', project.tracklist.system],
+                  ['Impact', project.tracklist.impact],
+                ] as const
+              )
+                .filter(([, value]) => Boolean(value))
+                .map(([term, value]) => (
+                  <div key={term}>
+                    <dt className="label mb-2 text-muted">{term}</dt>
+                    <dd className="text-[16px] leading-relaxed">{value}</dd>
                   </div>
-                )}
-                {project.tracklist.model && (
-                  <div>
-                    <span className="block text-[var(--muted)] uppercase tracking-wide mb-1">
-                      Model
-                    </span>
-                    <span className="text-[var(--ink-2)]">{project.tracklist.model}</span>
-                  </div>
-                )}
-                {project.tracklist.system && (
-                  <div>
-                    <span className="block text-[var(--muted)] uppercase tracking-wide mb-1">
-                      System
-                    </span>
-                    <span className="text-[var(--ink-2)]">{project.tracklist.system}</span>
-                  </div>
-                )}
-                {project.tracklist.impact && (
-                  <div>
-                    <span className="block text-[var(--muted)] uppercase tracking-wide mb-1">
-                      Impact
-                    </span>
-                    <span className="text-[var(--ink-2)]">{project.tracklist.impact}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </aside>
-        </div>
+                ))}
+            </dl>
+          </>
+        )}
+
+        <Link
+          href="/work"
+          className="label group mt-16 inline-flex items-center gap-2 text-accent"
+        >
+          <span
+            aria-hidden="true"
+            className="transition-transform duration-micro ease-enter group-hover:-translate-x-1"
+          >
+            &larr;
+          </span>
+          Back to the index
+        </Link>
       </article>
-
-      <LeatherFooter />
-    </>
+    </GridFrame>
   );
 }
