@@ -3,104 +3,106 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import RedDotIndicator from './RedDotIndicator';
+import { motion, useReducedMotion } from 'framer-motion';
+import { DURATION, EASE } from '@/lib/motion';
+import { siteConfig } from '@/content/site';
 
 const navLinks = [
   { href: '/work', label: 'Work' },
-  { href: '/about', label: 'About' },
+  { href: '/writing', label: 'Writing' },
   { href: '/notes', label: 'Notes' },
+  { href: '/about', label: 'About' },
+  { href: '/now', label: 'Now' },
   { href: '/contact', label: 'Contact' },
 ];
 
+/** The active marker: a ring that expands once from the accent dot. */
+function ActiveMarker() {
+  const reduced = useReducedMotion();
+  return (
+    <span aria-hidden="true" className="relative inline-block h-1.5 w-1.5">
+      <span className="absolute inset-0 rounded-full bg-accent" />
+      {!reduced && (
+        <motion.span
+          className="absolute inset-0 rounded-full border border-accent"
+          initial={{ scale: 1, opacity: 0.9 }}
+          animate={{ scale: 3.2, opacity: 0 }}
+          transition={{ duration: DURATION.entrance, ease: EASE.exit }}
+        />
+      )}
+    </span>
+  );
+}
+
 export default function TopNav() {
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const isActive = (href: string) =>
+    pathname === href || pathname?.startsWith(href + '/');
 
   return (
-    <header className="sticky top-0 z-50 bg-[var(--paper)] border-b border-[var(--border)]">
-      <nav className="container h-[72px] flex items-center">
-        <div className="flex items-center justify-between w-full">
-          {/* Logo/Name */}
-          <Link href="/" className="flex items-center gap-2 font-mono font-semibold text-[var(--ink)]">
-            <RedDotIndicator mode="nav" />
-            <span>Miguel Twahirwa</span>
-          </Link>
+    <header className="sticky top-0 z-40 border-b border-rule bg-paper/95 backdrop-blur-[2px]">
+      <nav className="container flex h-[68px] items-center justify-between">
+        <Link
+          href="/"
+          className="label text-[13px] tracking-[0.18em] text-ink-blue"
+        >
+          {siteConfig.name}
+        </Link>
 
-          {/* Desktop Nav */}
-          <ul className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href || pathname?.startsWith(link.href + '/');
-              const isHovered = hoveredLink === link.href;
-              return (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="flex items-center gap-2 font-mono text-sm text-[var(--ink)] hover:text-[var(--ink-2)] transition-colors"
-                    onMouseEnter={() => setHoveredLink(link.href)}
-                    onMouseLeave={() => setHoveredLink(null)}
-                  >
-                    {(isActive || isHovered) && <RedDotIndicator mode="hover" />}
-                    <span className={isActive ? 'border-b-2 border-[var(--ink)]' : ''}>
-                      {link.label}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+        <ul className="hidden items-center gap-7 md:flex">
+          {navLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                className="label flex items-center gap-2 transition-colors duration-micro ease-enter hover:text-accent"
+              >
+                {isActive(link.href) && <ActiveMarker />}
+                <span
+                  className={
+                    isActive(link.href)
+                      ? 'border-b border-accent pb-0.5 text-ink-blue'
+                      : 'text-ink-blue'
+                  }
+                >
+                  {link.label}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-[var(--ink)]"
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {mobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
+        <button
+          onClick={() => setOpen(!open)}
+          className="label text-ink-blue md:hidden"
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+        >
+          {open ? 'Close' : 'Menu'}
+        </button>
       </nav>
 
-      {/* Mobile Menu - Paper drawer */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-[var(--paper)] border-b border-[var(--border)] pb-4">
-          <ul className="container flex flex-col gap-4">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 font-mono text-sm text-[var(--ink)]"
-                  >
-                    {isActive && <RedDotIndicator mode="nav" />}
-                    <span className={isActive ? 'border-b-2 border-[var(--ink)]' : ''}>{link.label}</span>
-                  </Link>
-                </li>
-              );
-            })}
+      {open && (
+        <div
+          id="mobile-nav"
+          className="border-t border-rule-soft bg-paper pb-6 md:hidden"
+        >
+          <ul className="container flex flex-col gap-4 pt-4">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                  className="label flex items-center gap-2 text-ink-blue"
+                >
+                  {isActive(link.href) && <ActiveMarker />}
+                  {link.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       )}
