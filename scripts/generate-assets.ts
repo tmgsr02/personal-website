@@ -255,16 +255,20 @@ function encodeToWebp(pngPath: string, destPath: string, fullWidthPx: number): E
 // ---------------------------------------------------------------------------
 
 const ENGRAVINGS_DIR = path.join(process.cwd(), 'public/engravings');
-const BATCH_SIZE = 4; // fan out in parallel batches — batches of ~4 worked well in practice (spec §4.1)
+// Matches the historical scratchpad runs that produced the shipped plates —
+// run.sh/run2.sh/run3.sh each grouped exactly four `gen` calls per batch.
+// Not spec-mandated; 4 is just a value that is known to work.
+const BATCH_SIZE = 4;
 
-async function generateOne(asset: AssetSpec, overwrite: boolean): Promise<void> {
+/** Bytes written to destPath — either freshly encoded, or the size of the existing file when skipped. */
+async function generateOne(asset: AssetSpec, overwrite: boolean): Promise<number> {
   const destPath = path.join(ENGRAVINGS_DIR, `${asset.name}.webp`);
 
   // Never overwrite an existing shipped plate silently — someone re-running
   // this by accident must not destroy the shipped set.
   if (fs.existsSync(destPath) && !overwrite) {
     console.log(`SKIP ${asset.name}: ${destPath} already exists. Pass --overwrite to replace it.`);
-    return;
+    return fs.statSync(destPath).size;
   }
 
   const workDir = fs.mkdtempSync(path.join(os.tmpdir(), `generate-assets-${asset.name}-`));
@@ -286,24 +290,64 @@ async function generateOne(asset: AssetSpec, overwrite: boolean): Promise<void> 
   console.log(`DONE ${asset.name}: ${(result.bytes / 1024).toFixed(0)}KB at q${result.quality}${scaledNote}`);
 
   fs.rmSync(workDir, { recursive: true, force: true });
+  return result.bytes;
 }
 
-async function runInBatches(assets: readonly AssetSpec[], overwrite: boolean): Promise<void> {
+/** Bytes produced per successfully processed asset name (generated or skipped-existing). Throws if any asset failed. */
+async function runInBatches(assets: readonly AssetSpec[], overwrite: boolean): Promise<Map<string, number>> {
   const failures: string[] = [];
+  const bytesByName = new Map<string, number>();
   for (let i = 0; i < assets.length; i += BATCH_SIZE) {
     const batch = assets.slice(i, i + BATCH_SIZE);
     const results = await Promise.allSettled(batch.map((asset) => generateOne(asset, overwrite)));
     results.forEach((result, idx) => {
+      const name = batch[idx]?.name ?? '(unknown)';
       if (result.status === 'rejected') {
-        const name = batch[idx]?.name ?? '(unknown)';
         failures.push(name);
         console.error(`FAIL ${name}: ${String(result.reason)}`);
+      } else {
+        bytesByName.set(name, result.value);
       }
     });
   }
   if (failures.length > 0) {
     throw new Error(`${failures.length} asset(s) failed: ${failures.join(', ')}`);
   }
+  return bytesByName;
+}
+
+interface DirectoryTotal {
+  readonly totalBytes: number;
+  /** True only if every asset in the manifest has a known size (freshly produced this run, or already on disk). */
+  readonly complete: boolean;
+  readonly missing: readonly string[];
+}
+
+/**
+ * The real total payload across the full twelve-asset manifest: bytes
+ * produced this run take priority, falling back to the on-disk size of
+ * untouched files for a partial run. This is honest for both a full run
+ * (every byte count comes from this run) and a partial run (regenerated
+ * plates combine with the existing sizes of the ones left alone) — it never
+ * reports a total for plates that have never been generated at all.
+ */
+function computeDirectoryTotal(producedThisRun: ReadonlyMap<string, number>): DirectoryTotal {
+  let totalBytes = 0;
+  const missing: string[] = [];
+  for (const asset of ASSETS) {
+    const known = producedThisRun.get(asset.name);
+    if (known !== undefined) {
+      totalBytes += known;
+      continue;
+    }
+    const destPath = path.join(ENGRAVINGS_DIR, `${asset.name}.webp`);
+    if (fs.existsSync(destPath)) {
+      totalBytes += fs.statSync(destPath).size;
+    } else {
+      missing.push(asset.name);
+    }
+  }
+  return { totalBytes, complete: missing.length === 0, missing };
 }
 
 interface ParsedArgs {
@@ -338,8 +382,29 @@ async function main(): Promise<void> {
     `Generating ${targets.length} asset(s) in batches of ${BATCH_SIZE}${overwrite ? ' (--overwrite)' : ''}. ` +
       `Budget: ${PLATE_BUDGET_BYTES / 1024}KB/plate, ${(TOTAL_BUDGET_BYTES / 1024 / 1024).toFixed(1)}MB total.`
   );
-  await runInBatches(targets, overwrite);
+  const produced = await runInBatches(targets, overwrite);
   console.log('All requested assets generated.');
+
+  // The per-plate cap is enforced inside encodeToWebp and throws on its own;
+  // the 1.4MB total (spec §4.2/§4.3) is a separate hard requirement and must
+  // be checked explicitly here — twelve plates each just under the 180KB
+  // per-plate cap would total over 2MB and the per-plate check alone would
+  // never catch it.
+  const { totalBytes, complete, missing } = computeDirectoryTotal(produced);
+  const totalKB = (totalBytes / 1024).toFixed(0);
+  if (complete) {
+    console.log(`Directory total: ${totalKB}KB across all twelve plates (budget ${TOTAL_BUDGET_BYTES / 1024}KB).`);
+    if (totalBytes > TOTAL_BUDGET_BYTES) {
+      throw new Error(
+        `Total engraving payload ${totalKB}KB exceeds the ${TOTAL_BUDGET_BYTES / 1024}KB budget (spec §4.2/§4.3).`
+      );
+    }
+  } else {
+    console.log(
+      `Directory total so far: ${totalKB}KB. Budget check SKIPPED — ${missing.length} plate(s) have never been ` +
+        `generated and are not on disk yet: ${missing.join(', ')}.`
+    );
+  }
 }
 
 main().catch((err: unknown) => {
