@@ -183,17 +183,39 @@ resolution-independent.
 cream showing through, no second colour, no text/lettering/signature/
 watermark/drawn border, wide shot with the full subject visible.
 
-**Regenerating a plate:** the spec (§4.1–4.3) documents the generation and
-optimisation process that produced the committed set — a one-shot authoring
-script that shells out to Codex's `image_gen` tool per plate, run in parallel
-background jobs (one generation is roughly half an hour), followed by
-converting each PNG to WebP with `cwebp` (`sips` cannot write WebP on this
-machine) and stepping quality down (82 → 74 → 66 → 58, then downscaling before
-dropping quality further) until each plate is under 180KB.
-**`scripts/generate-assets.ts` — the script the spec names as the committed
-source of truth for this process — is not present in this repository.**
-Regenerating or adding a plate today means re-deriving that script from the
-spec's description rather than running a checked-in tool.
+**Regenerating a plate:** `scripts/generate-assets.ts` is the committed source
+of truth for the generation and optimisation process that produced the
+committed set. It holds a typed manifest of all twelve assets — name, size,
+and prompt — plus the locked style block, and shells out to Codex's
+`image_gen` tool per plate via `codex exec`.
+
+- `pnpm generate-assets` regenerates the full set of twelve.
+- `pnpm generate-assets <name> [<name> ...]` regenerates one or more named
+  plates (e.g. `pnpm generate-assets toronto-skyline`) without touching the
+  rest.
+- Generation fans out in parallel batches of four rather than looping
+  serially — one generation is roughly half an hour of wall clock, so twelve
+  in series is not acceptable.
+- It never overwrites an existing shipped plate silently: if
+  `public/engravings/<name>.webp` already exists, the asset is skipped with a
+  warning unless `--overwrite` is passed explicitly.
+- It is a one-shot authoring tool, run by hand, and is deliberately never
+  part of `pnpm build`.
+
+Each generated PNG is converted to WebP with `cwebp` (`sips` cannot write
+WebP on this machine) and the PNG is discarded. Quality steps down 82 → 74 →
+66 → 58 at full size first; only once that ladder is exhausted does the
+script downscale the plate and restart the ladder, because quality loss on
+these line drawings shows as hatching mush long before it shows as softness.
+Budget: under 180KB per plate, under 1.4MB for the full set.
+
+Three calibration findings from the original probe are encoded directly in
+the script's locked style block, since losing any of them silently changes
+the house style: Codex crops tight by default, so the style block spells out
+a wide shot with generous margin; Codex renders heavier than the reference
+plates, so the style block insists on light, open, airy hatching rather than
+a dark woodcut; and a single 1024² PNG lands around 2.4MB uncompressed, which
+is why the WebP conversion step is mandatory rather than optional.
 
 The `about-portrait` prompt is meant to reference source photographs in
 `assets/reference-portraits/`, which is `.gitignore`d — the source photos are
