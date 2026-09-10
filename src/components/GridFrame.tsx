@@ -66,6 +66,10 @@ export default function GridFrame({
         fill="none"
       >
         <motion.rect
+          // frame-rect: stable hook for the <noscript> rule in
+          // layout.tsx, which forces stroke-dashoffset to 0 so the frame
+          // renders fully drawn without JS — see G1.
+          className="frame-rect"
           x="0"
           y="0"
           width="100%"

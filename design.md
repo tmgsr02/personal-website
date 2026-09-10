@@ -238,11 +238,24 @@ CSS transitions and the already-installed Framer Motion — no new dependency.
   title shifting to `--accent`), and both are compositor-friendly.
 - Every Framer-driven effect calls `useReducedMotion()` and branches to its
   **final** state instantly (not a shortened animation) when it reports true.
-  As a second line of defence, `globals.css` carries a blanket
+- **A reduced-motion branch may vary animation *values* only — never the
+  element tree.** `useReducedMotion()` returns `null` on the server and its
+  real value on the client's first render, so any branch that adds or removes
+  a DOM node makes SSR and the client's first render diverge and React
+  discards that segment. Give both branches the same elements and collapse
+  `hidden`/`shown` (or `initial`/`animate`) onto the same values when reduced.
+  Never reach for a `useEffect`-set `mounted` flag instead: it paints the
+  animated state and then corrects, which is a visible flash.
+- As a second line of defence, `globals.css` carries a blanket
   `@media (prefers-reduced-motion: reduce)` rule that sets
   `animation: none !important; transition: none !important;` on every
-  element, which covers the plain-CSS effects (slide arrow, sibling dim, the
+  element, which covers the plain-CSS effects (slide arrow, row emphasis, the
   footer link nudge) that don't call the hook individually.
+- Because the reveals are Framer-driven, the plates, section labels and the
+  frame are all invisible without JavaScript. A `<noscript>` block in
+  `src/app/layout.tsx` forces `.engraving-image`, `.engraving-veil`,
+  `.section-letter` and `.frame-rect` to their end states. Any new
+  Framer-driven reveal needs a stable class and a matching rule there.
 
 | Effect | Component | Trigger | Behaviour |
 |---|---|---|---|
@@ -251,7 +264,7 @@ CSS transitions and the already-installed Framer Motion — no new dependency.
 | Text reveal | `SectionMarker` | Section enter (`whileInView`, once) | Mono caps label reveals per letter, 18ms stagger, 180ms each |
 | Slide arrow | `IndexRow`, footer links, CTA buttons | Row/link hover or focus | `→` translates 4px, plain CSS `transition-transform` |
 | Row emphasis | `IndexList` + `IndexRow` | Index list hover or focus | The focused row's title shifts to `--accent` (4.649:1 on `--paper`, clears AA) via `IndexListContext` tracking the hovered/focused row id; siblings stay at full opacity. Dimming sibling *text* was tried and measured: at any opacity dim enough to read as a dim, title/subtitle/arrow all drop below AA 4.5:1, and `onFocus` makes that dim persistent for a keyboard user — a contrast floor, not a taste choice, so the effect is inverted instead. Decorative arrows (`aria-hidden`) may still dim; they carry no contrast obligation |
-| Expand ring | `TopNav`'s `ActiveMarker` | Active route | A `--accent` ring scales from 1→3.2 and fades out once from the active nav dot; the ring element itself is omitted entirely (not just skipped mid-animation) when `useReducedMotion()` is true |
+| Expand ring | `TopNav`'s `ActiveMarker` | Active route | A `--accent` ring scales from 1→3.2 and fades out once from the active nav dot. Under reduced motion the ring is **still rendered**, with `animate` set equal to `initial` so it sits static on the dot. Do not "simplify" this by omitting the element: `useReducedMotion()` returns `null` on the server and its real value on the client's first render, so a structural branch makes SSR and client DOM diverge and React discards the segment. Every reduced-motion branch in this codebase varies animation *values* only, never the element tree — see the Rules above |
 | CTA lift | Primary CTA buttons (`/` and `/about`) | Hover | A 2px `-translate-y` lift, plain CSS |
 
 **Deviation from spec, flagged at completion:** the spec's §5.2 calls for a

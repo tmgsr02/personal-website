@@ -64,6 +64,7 @@ export default function RootLayout({
             .engraving-image { opacity: 1 !important; }
             .engraving-veil { opacity: 0 !important; transform: translateX(104%) !important; }
             .section-letter { opacity: 1 !important; transform: none !important; }
+            .frame-rect { stroke-dashoffset: 0 !important; }
           `}</style>
         </noscript>
         <a href="#main" className="skip-link">
