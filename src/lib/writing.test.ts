@@ -2,9 +2,17 @@ import { describe, it, expect } from 'vitest';
 import { getAllEssays, getEssayBySlug } from '@/lib/writing';
 
 describe('getAllEssays', () => {
-  it('finds every migrated essay', () => {
+  it('finds every migrated, non-draft essay', () => {
     const essays = getAllEssays();
-    expect(essays.length).toBe(4);
+    expect(essays.length).toBe(3);
+  });
+
+  it('excludes a draft essay (empty body) from the index', () => {
+    // 2026-goals-and-aspirations.mdx has real frontmatter but a bare "##"
+    // body, dated newest — it must not appear in getAllEssays(), even
+    // though the file stays on disk untouched.
+    const slugs = getAllEssays().map((e) => e.slug);
+    expect(slugs).not.toContain('2026-goals-and-aspirations');
   });
 
   it('sorts newest first', () => {

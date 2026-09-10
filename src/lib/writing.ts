@@ -23,14 +23,35 @@ function isSafeSlug(slug: string): boolean {
   return /^[a-z0-9][a-z0-9-]*$/i.test(slug);
 }
 
+/**
+ * gray-matter's `data` is `any`, so a missing frontmatter field would
+ * otherwise silently become `title: undefined` (an empty <h1>, an
+ * untitled index row) or `date: undefined` (a `NaN` sort comparator,
+ * i.e. arbitrary order). Fail loudly at build time instead, naming the
+ * offending file — a build that fails beats a site that renders wrong.
+ */
+function validateFrontmatter(
+  slug: string,
+  data: Record<string, unknown>
+): { title: string; date: string } {
+  if (typeof data.title !== 'string' || data.title.trim() === '') {
+    throw new Error(`Essay "${slug}.mdx" is missing a string "title".`);
+  }
+  if (typeof data.date !== 'string' || Number.isNaN(Date.parse(data.date))) {
+    throw new Error(`Essay "${slug}.mdx" is missing a valid "date".`);
+  }
+  return { title: data.title, date: data.date };
+}
+
 function toMeta(slug: string, raw: string): EssayWithContent {
   const { data, content } = matter(raw);
+  const { title, date } = validateFrontmatter(slug, data);
   const stats = readingTime(content);
 
   return {
     slug,
-    title: data.title,
-    date: data.date,
+    title,
+    date,
     summary: data.summary ?? '',
     tags: data.tags ?? [],
     readingTime: `${Math.ceil(stats.minutes)} min`,
@@ -38,16 +59,31 @@ function toMeta(slug: string, raw: string): EssayWithContent {
   };
 }
 
+/**
+ * A draft is an essay whose body is empty once frontmatter and whitespace
+ * are stripped — e.g. a scaffolded file with just a bare `##` heading.
+ * Drafts are excluded from every index (see `getAllEssays`) but the file
+ * itself is never touched: it stays on disk, editable, and simply isn't
+ * "published" until it has content.
+ */
+function isDraft(content: string): boolean {
+  return content.replace(/^#+\s*$/gm, '').trim() === '';
+}
+
 export function getAllEssays(): EssayMeta[] {
   const files = fs.readdirSync(WRITING_DIR).filter((f) => f.endsWith('.mdx'));
 
-  const essays = files.map((filename): EssayMeta => {
-    const slug = filename.replace(/\.mdx$/, '');
-    const raw = fs.readFileSync(path.join(WRITING_DIR, filename), 'utf-8');
-    const { content, ...meta } = toMeta(slug, raw);
-    void content;
-    return meta;
-  });
+  const essays = files
+    .map((filename): EssayWithContent => {
+      const slug = filename.replace(/\.mdx$/, '');
+      const raw = fs.readFileSync(path.join(WRITING_DIR, filename), 'utf-8');
+      return toMeta(slug, raw);
+    })
+    .filter((essay) => !isDraft(essay.content))
+    .map(({ content, ...meta }): EssayMeta => {
+      void content;
+      return meta;
+    });
 
   return essays.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
