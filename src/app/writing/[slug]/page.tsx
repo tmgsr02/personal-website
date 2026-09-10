@@ -45,7 +45,7 @@ export default async function EssayPage({ params }: PageProps) {
         <p className="label mb-14 text-muted">
           {essay.date} — {essay.readingTime}
         </p>
-        <div className="prose-editorial max-w-prose">{content}</div>
+        <div className="max-w-prose">{content}</div>
 
         <Link
           href="/writing"

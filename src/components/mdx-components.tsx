@@ -48,7 +48,7 @@ export const mdxComponents: MDXComponents = {
   ),
   a: (props) => (
     <a
-      className="text-accent underline underline-offset-2 transition-opacity duration-micro ease-enter hover:opacity-70"
+      className="text-accent hover:underline underline-offset-2"
       {...props}
     />
   ),
