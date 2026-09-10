@@ -35,4 +35,12 @@ describe('getEssayBySlug', () => {
   it('does not traverse outside the writing directory', () => {
     expect(getEssayBySlug('../../../etc/passwd')).toBeNull();
   });
+
+  it('rejects a traversing slug even when it resolves to a real essay', () => {
+    // Without isSafeSlug this path.join()s straight back into WRITING_DIR and
+    // returns a real essay, so this case fails loudly if the guard is ever
+    // removed — unlike a traversal to a file that does not exist, which would
+    // pass for the wrong reason.
+    expect(getEssayBySlug('../writing/early-warning-systems')).toBeNull();
+  });
 });
