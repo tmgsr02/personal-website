@@ -51,8 +51,26 @@ export default function RootLayout({
       className={`${bodoniModa.variable} ${sourceSerif.variable} ${ibmPlexMono.variable}`}
     >
       <body>
+        {/* Framer's whileInView reveals never fire without JS, which
+            would otherwise ship every engraving plate stuck at 0.25
+            opacity behind an opaque paper veil, and every SectionMarker
+            label stuck at 0 opacity — invisible to a sighted no-JS
+            visitor (assistive tech is unaffected; the sr-only label
+            survives). Force both to their end state. `!important` in an
+            author stylesheet beats a normal (non-!important) inline
+            style, which is how Framer sets these. */}
+        <noscript>
+          <style>{`
+            .engraving-image { opacity: 1 !important; }
+            .engraving-veil { opacity: 0 !important; transform: translateX(104%) !important; }
+            .section-letter { opacity: 1 !important; transform: none !important; }
+          `}</style>
+        </noscript>
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         <TopNav />
-        <main>{children}</main>
+        <main id="main">{children}</main>
         <SkylineFooter />
       </body>
     </html>

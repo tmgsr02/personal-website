@@ -99,4 +99,22 @@
     text-transform: uppercase;
     color: var(--ink-blue);
   }
+
+  /* Visually hidden until focused — the first focusable element in the
+     body, so keyboard users can jump past the seven nav links straight
+     to <main id="main">. */
+  .skip-link {
+    position: fixed;
+    top: -100%;
+    left: var(--frame-inset);
+    z-index: 50;
+    background-color: var(--paper);
+    color: var(--ink-blue);
+    padding: 0.75em 1.25em;
+    border: 1px solid var(--rule);
+  }
+
+  .skip-link:focus-visible {
+    top: var(--frame-inset);
+  }
 }
