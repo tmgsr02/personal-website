@@ -42,7 +42,7 @@ export default function TopNav() {
     pathname === href || pathname?.startsWith(href + '/');
 
   return (
-    <header className="sticky top-0 z-40 border-b border-rule bg-paper/95 backdrop-blur-[2px]">
+    <header className="sticky top-0 z-40 border-b border-rule bg-paper">
       <nav className="container flex h-[68px] items-center justify-between">
         <Link
           href="/"
