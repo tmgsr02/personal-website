@@ -20,9 +20,9 @@ export default function SideRail({ side, lines }: SideRailProps) {
       style={{ width: 'var(--frame-inset)' }}
     >
       <div className="flex flex-col items-center gap-1">
-        {lines.map((line) => (
+        {lines.map((line, i) => (
           <span
-            key={line}
+            key={i}
             className="label text-[9px] leading-tight"
             style={{ writingMode: 'vertical-rl' }}
           >

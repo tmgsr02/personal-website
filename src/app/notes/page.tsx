@@ -26,6 +26,7 @@ export default function NotesPage() {
             width={1024}
             height={1024}
             priority
+            sizes="(max-width: 768px) 100vw, 40vw"
           />
         </div>
       </section>
@@ -33,7 +34,11 @@ export default function NotesPage() {
       <section className="container border-t border-rule py-20">
         <ul className="grid gap-x-12 gap-y-10 md:grid-cols-2">
           {fieldNotes.map((note) => (
-            <li key={note.id} className="border-l border-rule-soft pl-5">
+            <li
+              key={note.id}
+              id={note.id}
+              className="scroll-mt-24 border-l border-rule-soft pl-5"
+            >
               <p className="label mb-2 text-muted">
                 {note.id} — {note.date}
               </p>

@@ -37,7 +37,6 @@ export default function WorkPage() {
 
       <div className="container grid gap-16 border-t border-rule py-20 md:grid-cols-2 md:gap-12">
         <section>
-          <SectionMarker index={1} label="Experience" />
           <IndexList>
             {experience.map((entry, i) => (
               <IndexRow
@@ -61,7 +60,7 @@ export default function WorkPage() {
                 id={note.id}
                 index={note.id}
                 title={note.title}
-                href="/notes"
+                href={`/notes#${note.id}`}
               />
             ))}
           </IndexList>

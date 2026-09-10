@@ -64,7 +64,7 @@ describe('design tokens', () => {
     expect(contrast(token('muted'), token('paper'))).toBeGreaterThanOrEqual(4.5);
   });
 
-  it('retires every Analog Pop Craft token', () => {
+  it('retires every Analog Pop Craft token, including any variant', () => {
     for (const dead of [
       'pop-orange', 'pop-mustard', 'pop-blue',
       'leather', 'stitch', 'signal-red',
@@ -72,7 +72,10 @@ describe('design tokens', () => {
       'shadow-sm', 'shadow-md',
       'r-md', 'r-lg', 'r-pill',
     ]) {
-      expect(css).not.toContain(`--${dead}:`);
+      // A bare substring match (`--${dead}:`) would miss a reintroduced
+      // variant like `--leather-dark:` or `--stitch-shadow:`. Match the
+      // token name plus any hyphenated suffix instead.
+      expect(css).not.toMatch(new RegExp(`--${dead}[-a-z0-9]*\\s*:`));
     }
   });
 });

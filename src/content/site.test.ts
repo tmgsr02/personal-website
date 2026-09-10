@@ -24,6 +24,17 @@ describe('site content', () => {
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
+  it('keeps experience and project slugs disjoint', () => {
+    // /work/[slug] resolves against both arrays; an overlapping slug would
+    // render two <h1>s on that route and emit a duplicate static param.
+    const experienceSlugs = new Set(experience.map((e) => e.slug));
+    const projectSlugs = new Set(projects.map((p) => p.slug));
+    const overlap = [...experienceSlugs].filter((slug) =>
+      projectSlugs.has(slug)
+    );
+    expect(overlap).toEqual([]);
+  });
+
   it('only references projects that exist', () => {
     const projectSlugs = new Set(projects.map((p) => p.slug));
     for (const entry of experience) {

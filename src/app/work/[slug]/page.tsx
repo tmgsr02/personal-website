@@ -62,7 +62,13 @@ export default async function WorkDetailPage({ params }: PageProps) {
                     return (
                       <li key={p.slug} className="border-l border-rule-soft pl-5">
                         <Link href={`/work/${p.slug}`} className="group block">
-                          <h3 className="mb-2 text-ink-blue">{p.title}</h3>
+                          {/* h2, not h3: promoted so the page's heading
+                              levels don't skip a level. Size and weight
+                              pinned to h3's former values (20px / 500) so
+                              the visual hierarchy is unchanged. */}
+                          <h2 className="mb-2 text-[20px] font-medium text-ink-blue">
+                            {p.title}
+                          </h2>
                           <p className="mb-3 text-[15px] text-muted">
                             {p.outcome}
                           </p>
