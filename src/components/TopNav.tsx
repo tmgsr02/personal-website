@@ -19,17 +19,22 @@ const navLinks = [
 /** The active marker: a ring that expands once from the accent dot. */
 function ActiveMarker() {
   const reduced = useReducedMotion();
+  // Always render the ring — SSR (reduced === null) always emits it, so
+  // conditionally omitting it on the client's first render (when reduced
+  // resolves to true) would be a structural hydration mismatch. When
+  // reduced, animate to the same values as initial so it's present but
+  // static instead of absent.
+  const initial = { scale: 1, opacity: 0.9 };
+  const animate = reduced ? initial : { scale: 3.2, opacity: 0 };
   return (
     <span aria-hidden="true" className="relative inline-block h-1.5 w-1.5">
       <span className="absolute inset-0 rounded-full bg-accent" />
-      {!reduced && (
-        <motion.span
-          className="absolute inset-0 rounded-full border border-accent"
-          initial={{ scale: 1, opacity: 0.9 }}
-          animate={{ scale: 3.2, opacity: 0 }}
-          transition={{ duration: DURATION.entrance, ease: EASE.exit }}
-        />
-      )}
+      <motion.span
+        className="absolute inset-0 rounded-full border border-accent"
+        initial={initial}
+        animate={animate}
+        transition={{ duration: DURATION.entrance, ease: EASE.exit }}
+      />
     </span>
   );
 }

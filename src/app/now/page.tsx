@@ -25,6 +25,7 @@ export default function NowPage() {
             width={1024}
             height={1024}
             priority
+            sizes="(max-width: 768px) 100vw, 40vw"
           />
         </div>
       </section>

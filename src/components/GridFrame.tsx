@@ -73,7 +73,11 @@ export default function GridFrame({
           stroke="var(--rule)"
           strokeWidth="1"
           pathLength={1}
-          initial={reduced ? false : { strokeDashoffset: 1 }}
+          // `initial` stays a stable object across both branches — only the
+          // target value varies — so SSR (reduced === null) and a
+          // reduced-motion client's first render agree on structure and
+          // attributes, not just structure.
+          initial={{ strokeDashoffset: reduced ? 0 : 1 }}
           animate={{ strokeDashoffset: 0 }}
           transition={{ duration: DURATION.frame, ease: EASE.enter }}
           style={{ strokeDasharray: 1 }}

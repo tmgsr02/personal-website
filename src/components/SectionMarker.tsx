@@ -25,8 +25,14 @@ export default function SectionMarker({ index, label }: SectionMarkerProps) {
         {letters.map((char, i) => (
           <motion.span
             key={`${char}-${i}`}
-            className="inline-block whitespace-pre"
-            initial={reduced ? false : { opacity: 0, y: 4 }}
+            // section-letter: stable hook for the <noscript> rule in
+            // layout.tsx — see G1.
+            className="section-letter inline-block whitespace-pre"
+            // Stable object shape across both branches — only the target
+            // value varies — so this only ever produces an attribute-level
+            // difference, never a type-level one. See GridFrame for the
+            // same principle.
+            initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 4 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{
