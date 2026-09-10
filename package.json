@@ -9,6 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "new-essay": "npx tsx scripts/new-essay.ts",
+    "generate-assets": "npx tsx scripts/generate-assets.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
