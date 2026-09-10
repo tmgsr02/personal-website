@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { IBM_Plex_Mono, Bodoni_Moda, Source_Serif_4 } from 'next/font/google';
 import './globals.css';
 import TopNav from '@/components/TopNav';
+import SkylineFooter from '@/components/SkylineFooter';
 import { siteConfig } from '@/content/site';
 
 const bodoniModa = Bodoni_Moda({
@@ -26,12 +27,16 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: `${siteConfig.name} - ${siteConfig.tagline}`,
+  title: {
+    default: `${siteConfig.name} — ${siteConfig.role}`,
+    template: `%s — ${siteConfig.name}`,
+  },
   description: siteConfig.hero.subhead,
   openGraph: {
     title: siteConfig.name,
     description: siteConfig.tagline,
     type: 'website',
+    images: ['/engravings/og-card.webp'],
   },
 };
 
@@ -48,6 +53,7 @@ export default function RootLayout({
       <body>
         <TopNav />
         <main>{children}</main>
+        <SkylineFooter />
       </body>
     </html>
   );
