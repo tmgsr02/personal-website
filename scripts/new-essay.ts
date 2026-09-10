@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as readline from 'readline';
 import { execSync } from 'child_process';
 
-const NOTES_DIR = path.join(process.cwd(), 'src/content/notes');
+const WRITING_DIR = path.join(process.cwd(), 'src/content/writing');
 
 function slugify(title: string): string {
   return title
@@ -28,7 +28,7 @@ function ask(question: string): Promise<string> {
 }
 
 async function main() {
-  const title = await ask('Note title: ');
+  const title = await ask('Essay title: ');
   if (!title) {
     console.error('Title is required.');
     process.exit(1);
@@ -36,7 +36,7 @@ async function main() {
 
   const slug = slugify(title);
   const date = today();
-  const filePath = path.join(NOTES_DIR, `${slug}.mdx`);
+  const filePath = path.join(WRITING_DIR, `${slug}.mdx`);
 
   if (fs.existsSync(filePath)) {
     console.error(`File already exists: ${filePath}`);
@@ -53,7 +53,7 @@ tags: []
 ##
 `;
 
-  fs.mkdirSync(NOTES_DIR, { recursive: true });
+  fs.mkdirSync(WRITING_DIR, { recursive: true });
   fs.writeFileSync(filePath, content, 'utf-8');
   console.log(`Created: ${filePath}`);
 

@@ -1,126 +1,67 @@
 import React from 'react';
-import SectionHeaderStrip from '@/components/SectionHeaderStrip';
-import { interests } from '@/content/site';
-import LeatherFooter from '@/components/LeatherFooter';
+import Link from 'next/link';
+import type { Metadata } from 'next';
+import GridFrame from '@/components/GridFrame';
+import SectionMarker from '@/components/SectionMarker';
+import EngravingPlate from '@/components/EngravingPlate';
+import CapabilityCard from '@/components/CapabilityCard';
+import { siteConfig, capabilities } from '@/content/site';
 
-const timeline = [
-  {
-    year: '2024',
-    title: 'Senior Data Scientist',
-    company: 'Supply Chain Co.',
-    description: 'Leading ML initiatives for demand forecasting and inventory optimization.',
-  },
-  {
-    year: '2021',
-    title: 'Data Scientist',
-    company: 'Logistics Firm',
-    description: 'Built predictive models for route optimization and cost reduction.',
-  },
-  {
-    year: '2018',
-    title: 'Data Analyst',
-    company: 'Manufacturing Inc.',
-    description: 'Developed dashboards and reporting systems for operations team.',
-  },
-];
+export const metadata: Metadata = { title: 'About' };
 
 export default function AboutPage() {
   return (
-    <>
-      <SectionHeaderStrip
-        kicker="Background"
-        title="About Me"
-        variant="blue"
-      />
-
-      <div className="container py-12 md:py-20">
-        {/* Bio Section */}
-        <section className="max-w-3xl mb-16">
-          <p className="text-[var(--h3)] font-mono text-[var(--ink-2)] leading-relaxed mb-6">
-            I&apos;m a data scientist who loves building products that solve real problems.
-          </p>
-          <div className="space-y-4 text-[var(--body)] font-mono text-[var(--ink-2)] leading-relaxed">
-            <p>
-              For the past 6+ years, I&apos;ve been deep in the supply chain world, using machine learning
-              and data tools to optimize everything from demand forecasting to inventory management.
+    <GridFrame
+      railLeft={['TOR', 'EST', '2024']}
+      railRight={['IDEAS', 'PEOPLE', 'SYSTEMS', 'A BRIGHTER TOMORROW']}
+    >
+      <section className="container pb-16 pt-16 md:pt-24">
+        <SectionMarker index={3} label="Philosophy" />
+        <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
+          <div>
+            <h1 className="mb-8 uppercase">{siteConfig.hero.headline}</h1>
+            <p className="mb-6 max-w-prose text-[17px] leading-relaxed">
+              {siteConfig.hero.subhead}
             </p>
-            <p>
-              I believe the best data science happens when you deeply understand the domain and can
-              ship solutions that people actually use. That&apos;s why I focus on the full stack: from SQL
-              queries to production ML pipelines to user-facing Power BI dashboards.
+            <p className="mb-10 max-w-prose text-[17px] leading-relaxed">
+              {siteConfig.hero.secondary}
             </p>
-            <p>
-              When I&apos;m not building ML models, you&apos;ll find me on a basketball court, digging through
-              record crates, capturing moments with my camera, or hacking on side projects that scratch
-              my own itches.
-            </p>
-          </div>
-        </section>
-
-        {/* Timeline with Stitched Spine */}
-        <section className="mb-16">
-          <h2 className="font-[var(--font-display)] text-[var(--h2)] mb-12">Timeline</h2>
-
-          <div className="relative pl-8 md:pl-12">
-            {/* Stitched spine line */}
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--leather)] opacity-30" />
-
-            {/* Stitch marks */}
-            <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-around">
-              {timeline.map((_, index) => (
-                <div
-                  key={index}
-                  className="w-3 h-3 bg-[var(--stitch)] rounded-full -translate-x-1"
-                />
-              ))}
-            </div>
-
-            <div className="space-y-12">
-              {timeline.map((item) => (
-                <div key={item.year} className="relative">
-                  <div className="absolute -left-8 md:-left-12 top-0 font-[var(--font-display)] text-[var(--h3)] text-[var(--muted)]">
-                    {item.year}
-                  </div>
-                  <div className="pl-4">
-                    <h3 className="font-[var(--font-display)] text-[var(--h3)] mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-[var(--body)] text-[var(--muted)] font-mono mb-2">
-                      {item.company}
-                    </p>
-                    <p className="text-[var(--body)] text-[var(--ink-2)] font-mono">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Interests */}
-        <section>
-          <h2 className="font-[var(--font-display)] text-[var(--h2)] mb-8">Beyond Work</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {interests.map((interest) => (
-              <div
-                key={interest.title}
-                className="border-2 border-[var(--ink)] rounded-[var(--r-md)] p-6 bg-[var(--paper)] hover:bg-[var(--paper-2)] transition-colors text-center"
+            <Link
+              href="/work"
+              className="label group inline-flex items-center gap-3 bg-ink-blue px-6 py-3.5 text-paper transition-transform duration-micro ease-enter hover:-translate-y-0.5"
+            >
+              My approach
+              <span
+                aria-hidden="true"
+                className="text-accent transition-transform duration-micro ease-enter group-hover:translate-x-1"
               >
-                <div className="text-4xl mb-3">{interest.icon}</div>
-                <h3 className="font-[var(--font-display)] text-[var(--body)] mb-2">
-                  {interest.title}
-                </h3>
-                <p className="text-[var(--small)] text-[var(--muted)] font-mono">
-                  {interest.description}
-                </p>
-              </div>
-            ))}
+                &rarr;
+              </span>
+            </Link>
+            <p className="label mt-10 text-muted">Curiosity to clarity</p>
           </div>
-        </section>
-      </div>
 
-      <LeatherFooter />
-    </>
+          <EngravingPlate
+            src="/engravings/about-portrait.webp"
+            alt="Engraved portrait of Miguel Twahirwa working at a desk, with the Toronto skyline through the window behind him."
+            width={1280}
+            height={853}
+            priority
+          />
+        </div>
+      </section>
+
+      <section className="container border-t border-rule py-20">
+        <SectionMarker index={4} label="Capabilities" />
+        <div className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
+          {capabilities.map((capability) => (
+            <CapabilityCard key={capability.index} capability={capability} />
+          ))}
+        </div>
+        <p className="label mt-16 text-muted">
+          Tools for a more human future
+        </p>
+      </section>
+    </GridFrame>
   );
 }

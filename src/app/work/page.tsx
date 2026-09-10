@@ -1,27 +1,71 @@
 import React from 'react';
-import { projects } from '@/content/site';
-import SectionHeaderStrip from '@/components/SectionHeaderStrip';
-import ProjectCard from '@/components/ProjectCard';
-import LeatherFooter from '@/components/LeatherFooter';
+import type { Metadata } from 'next';
+import GridFrame from '@/components/GridFrame';
+import SectionMarker from '@/components/SectionMarker';
+import EngravingPlate from '@/components/EngravingPlate';
+import IndexList from '@/components/IndexList';
+import IndexRow from '@/components/IndexRow';
+import { experience, fieldNotes } from '@/content/site';
+
+export const metadata: Metadata = { title: 'Work' };
 
 export default function WorkPage() {
   return (
-    <>
-      <SectionHeaderStrip
-        kicker="Portfolio"
-        title="All Projects"
-        variant="orange"
-      />
-
-      <div className="container py-12 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {projects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
+    <GridFrame railRight={['PEOPLE', 'PROBLEMS', 'PROGRESS']}>
+      <section className="container pb-16 pt-16 md:pt-24">
+        <SectionMarker index={5} label="Experience Index" />
+        <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
+          <div>
+            <h1 className="mb-8 uppercase">Work, study, and systems</h1>
+            <p className="max-w-prose text-[17px] leading-relaxed">
+              A concise index of places where I have built, analyzed, learned,
+              and contributed.
+            </p>
+            <p className="label mt-10 text-muted">
+              People / Problems / Progress
+            </p>
+          </div>
+          <EngravingPlate
+            src="/engravings/work-still-life.webp"
+            alt=""
+            width={1536}
+            height={1024}
+            priority
+          />
         </div>
-      </div>
+      </section>
 
-      <LeatherFooter />
-    </>
+      <div className="container grid gap-16 border-t border-rule py-20 md:grid-cols-2 md:gap-12">
+        <section>
+          <IndexList>
+            {experience.map((entry, i) => (
+              <IndexRow
+                key={entry.slug}
+                id={entry.slug}
+                index={String(i + 1).padStart(2, '0')}
+                title={entry.org}
+                subtitle={entry.disciplines.join(' / ')}
+                href={`/work/${entry.slug}`}
+              />
+            ))}
+          </IndexList>
+        </section>
+
+        <section>
+          <SectionMarker index={6} label="Field Notes" />
+          <IndexList>
+            {fieldNotes.map((note) => (
+              <IndexRow
+                key={note.id}
+                id={note.id}
+                index={note.id}
+                title={note.title}
+                href={`/notes#${note.id}`}
+              />
+            ))}
+          </IndexList>
+        </section>
+      </div>
+    </GridFrame>
   );
 }
