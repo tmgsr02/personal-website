@@ -38,10 +38,20 @@ A thoughtful visitor thinks: "I'd trust this person to own a messy, important pr
 
 Visual intent is defined in `design.md`—follow it closely.
 
-- Paper-first editorial layout with subtle tactile textures (paper, burlap, leather)
-- Pop-art hero moments used sparingly
-- Minimal "red dot" signal system for focus and activity
-- Strong typography and clean hierarchy
+The shipped direction is **"Blue Ink Editorial"**: a single-ink system —
+cream paper, blue copperplate engraving, a hairline grid frame — that makes
+each page read as a printed plate rather than a web page. It supersedes an
+earlier "Analog Pop Craft" direction (pop-art crops, burlap, leather, a red
+dot signal); none of that survives in the current codebase or tokens.
+
+- Paper-first editorial layout: cream ground, hairline rules, no textures
+- Engraving plates (single-ink line art) as the site's imagery, not photos
+- No "red dot" — focus and activity read through an accent-coloured arrow,
+  active nav marker, and (per the current index-row treatment) an
+  accent-coloured title on the focused row
+- Strong typography and clean hierarchy; `design.md` §2 is the source of
+  truth for tokens, and this file must never restate token values that could
+  drift from it
 
 ---
 
@@ -54,7 +64,7 @@ Visual intent is defined in `design.md`—follow it closely.
 | Styling | Tailwind CSS + CSS variables (design tokens) |
 | Animation | Framer Motion (minimal, respects `prefers-reduced-motion`) |
 | Images | next/image |
-| Content | MDX files (notes) + static TypeScript data (projects, config) |
+| Content | MDX files in `src/content/writing/*.mdx` (long-form essays) + static TypeScript data in `src/content/site.ts` (config, experience, projects, capabilities, field notes) |
 | Deployment | Vercel-compatible |
 
 No backend, database, auth, CMS, or API layers required.
@@ -71,7 +81,11 @@ pnpm dev              # Start dev server
 pnpm build            # Production build
 pnpm lint             # Run ESLint
 pnpm typecheck        # Run TypeScript compiler
-pnpm new-note         # Scaffold a new MDX note
+pnpm test             # Run the vitest suite
+pnpm new-essay        # Scaffold a new MDX essay under src/content/writing/
+pnpm generate-assets  # Regenerate engraving plates — see design.md §4. Do
+                       # NOT run this casually: it calls an image-generation
+                       # API and takes minutes per plate.
 ```
 
 ---
@@ -81,13 +95,16 @@ pnpm new-note         # Scaffold a new MDX note
 ```
 ├── src/app/              # Next.js App Router pages and layouts
 ├── src/components/       # Reusable React components
-├── src/content/          # Static data: site.ts (config/projects) + notes/*.mdx
-├── src/lib/              # Utility modules (notes loader, etc.)
-├── src/styles/           # Global styles and design tokens
-├── scripts/              # CLI tools (new-note scaffolding)
-├── public/               # Static assets (images, textures)
+├── src/content/          # site.ts (config, experience, projects, field notes) + writing/*.mdx (essays)
+├── src/lib/              # Utility modules (writing.ts essay loader, motion.ts tokens, etc.)
+├── src/styles/           # Global styles and design tokens (tokens.css)
+├── scripts/              # CLI tools (new-essay scaffolding, engraving-plate generation)
+├── public/engravings/    # Committed engraving plates (WebP) — see design.md §4
 └── design.md             # Visual design specifications
 ```
+
+Notes (`/notes`, short dated log entries) are a `FieldNote[]` array directly
+in `site.ts`, not MDX — only long-form Writing (`/writing`) is MDX-backed.
 
 ---
 
@@ -109,6 +126,7 @@ pnpm new-note         # Scaffold a new MDX note
 Before considering work complete:
 - [ ] `pnpm typecheck` passes
 - [ ] `pnpm lint` passes
+- [ ] `pnpm test` passes
 - [ ] `pnpm build` succeeds
 - [ ] Visual output matches design intent
 - [ ] Responsive behavior verified

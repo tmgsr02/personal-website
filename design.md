@@ -232,7 +232,10 @@ CSS transitions and the already-installed Framer Motion — no new dependency.
 - 180ms for micro-interactions (`DURATION.micro`); 700–900ms for the two
   entrance moments (`DURATION.entrance`, `DURATION.frame`) only.
 - Enter `cubic-bezier(0.22, 1, 0.36, 1)`; exit `cubic-bezier(0.4, 0, 0.2, 1)`.
-- Animate `transform` and `opacity` only.
+- Animate `transform`, `opacity`, and colour — never layout properties. This
+  is what the constraint actually means and what shipped: `SkylineFooter` and
+  `TopNav` legitimately use `transition-colors` (e.g. the focused `IndexRow`
+  title shifting to `--accent`), and both are compositor-friendly.
 - Every Framer-driven effect calls `useReducedMotion()` and branches to its
   **final** state instantly (not a shortened animation) when it reports true.
   As a second line of defence, `globals.css` carries a blanket
@@ -247,7 +250,7 @@ CSS transitions and the already-installed Framer Motion — no new dependency.
 | Ink reveal | `EngravingPlate` | Plate scroll-in (`whileInView`, once) | Image fades 0.25→1 opacity under a paper-coloured gradient veil that slides off to the right, 700ms |
 | Text reveal | `SectionMarker` | Section enter (`whileInView`, once) | Mono caps label reveals per letter, 18ms stagger, 180ms each |
 | Slide arrow | `IndexRow`, footer links, CTA buttons | Row/link hover or focus | `→` translates 4px, plain CSS `transition-transform` |
-| Sibling dim | `IndexList` + `IndexRow` | Index list hover | Non-hovered rows drop to 45% opacity via React context (`IndexListContext`) tracking the hovered row id — opacity, not blur |
+| Row emphasis | `IndexList` + `IndexRow` | Index list hover or focus | The focused row's title shifts to `--accent` (4.649:1 on `--paper`, clears AA) via `IndexListContext` tracking the hovered/focused row id; siblings stay at full opacity. Dimming sibling *text* was tried and measured: at any opacity dim enough to read as a dim, title/subtitle/arrow all drop below AA 4.5:1, and `onFocus` makes that dim persistent for a keyboard user — a contrast floor, not a taste choice, so the effect is inverted instead. Decorative arrows (`aria-hidden`) may still dim; they carry no contrast obligation |
 | Expand ring | `TopNav`'s `ActiveMarker` | Active route | A `--accent` ring scales from 1→3.2 and fades out once from the active nav dot; the ring element itself is omitted entirely (not just skipped mid-animation) when `useReducedMotion()` is true |
 | CTA lift | Primary CTA buttons (`/` and `/about`) | Hover | A 2px `-translate-y` lift, plain CSS |
 
@@ -280,7 +283,11 @@ the genuine draw-on — that's where the budget is spent.
   dimming through the shared context.
 - **`EngravingPlate`** — wraps `next/image` and owns the §5 ink reveal, so no
   page composes that animation by hand. Takes
-  `src, alt, width, height, priority?, className?`.
+  `src, alt, width, height, priority?, className?, sizes?`. `sizes` defaults
+  to `(max-width: 768px) 100vw, 60vw`, the right ratio for a plate in a
+  `md:grid-cols-2` hero; `/now` and `/notes` pass
+  `(max-width: 768px) 100vw, 40vw` since their heroes sit in the `2fr` of a
+  `md:grid-cols-[3fr_2fr]` layout instead.
 - **`CapabilityCard`** — index, title, description, and a capability icon
   plate; used in the 2-up/4-up capabilities grid on `/` and `/about`.
 - **`SkylineFooter`** — contact links (Email, LinkedIn, GitHub, Are.na) above
@@ -317,6 +324,17 @@ through `src/lib/writing.ts` (`getAllEssays`, `getEssayBySlug`, exporting
 `EssayMeta` / `EssayWithContent`). Notes are short, dated log entries defined
 directly as a `FieldNote[]` array in `site.ts` — no MDX loader.
 
+**Drafts.** An essay whose body is empty after stripping frontmatter and
+whitespace (e.g. a scaffolded file with just a bare `##` heading) is a draft.
+`getAllEssays()` excludes drafts from every index — `/writing`, the home
+page's `04 // WRITING` block, and `generateStaticParams` (so the route
+simply isn't built). The file itself is never touched: it stays on disk,
+under version control, and editable — finishing it is enough to make it
+appear everywhere automatically. `toMeta()` also throws at build time if an
+essay's `title` or `date` frontmatter is missing or malformed, naming the
+offending file, rather than silently rendering an empty heading or sorting
+by `NaN`.
+
 **Legacy redirect:** `next.config.ts` 308-redirects `/notes/:slug` to
 `/writing/:slug`, so the four essays that used to live under `/notes` keep
 their old links working. `/notes` itself is unaffected by this rule — it's a
@@ -338,6 +356,17 @@ WCAG 2.1 AA.
   plate, carries real descriptive alt text.
 - All six nav items are keyboard-navigable, including inside the mobile
   drawer; the active item carries `aria-current="page"`.
+- A skip link (`.skip-link` in `globals.css`) is the first focusable element
+  in `<body>`, visually hidden until focused, linking to `<main id="main">`
+  in `src/app/layout.tsx` — so keyboard users can bypass the seven nav links
+  that precede content on every route.
+- A `<noscript>` style block in `layout.tsx` forces engraving plates
+  (`.engraving-image` / `.engraving-veil`) and `SectionMarker` labels
+  (`.section-letter`) to their final revealed state, since Framer's
+  `whileInView` reveals never fire without JS — a failed JS chunk should not
+  hide the entire visual direction from a sighted visitor. Assistive tech is
+  unaffected either way: `SectionMarker`'s full label lives in a permanent
+  `sr-only` span.
 
 ## 9. Verification
 
