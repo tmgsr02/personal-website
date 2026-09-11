@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     default: `${siteConfig.name} — ${siteConfig.role}`,
     template: `%s — ${siteConfig.name}`,
   },
-  description: siteConfig.hero.subhead,
+  description: siteConfig.hero.body[0],
   openGraph: {
     title: siteConfig.name,
     description: siteConfig.tagline,

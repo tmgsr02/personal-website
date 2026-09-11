@@ -11,7 +11,23 @@ export const siteConfig = {
   tagline: 'Ideas to systems to impact',
   email: 'hello@migueltwahirwa.com',
 
+  // Home page, section 01 — Introduction. Two display lines, two paragraphs,
+  // two routes out.
   hero: {
+    headline: ['A curious mind.', 'A habit of making.'],
+    body: [
+      'I’m Miguel, a data scientist and creative technologist based in Toronto. I like getting beneath the surface: questioning assumptions, finding connections across disciplines, and imagining how things could work differently.',
+      'I explore those possibilities through data, code, and design, turning ideas into products, experiments, and visual stories. This is where I share what I’m making, what I’m learning, and the questions I’m still working through.',
+    ],
+    actions: [
+      { label: 'Explore my work', href: '/work' },
+      { label: 'More about me', href: '/about' },
+    ],
+  },
+
+  // About page, section 03 — Philosophy. Kept separate from the hero so the
+  // two pages stop sharing one set of paragraphs.
+  about: {
     headline: 'Understand before you optimize',
     subhead:
       'The interesting problems usually begin before the model. What are we actually trying to change, what evidence matters, and what assumptions are worth testing?',

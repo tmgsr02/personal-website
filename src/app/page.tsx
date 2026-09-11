@@ -12,6 +12,7 @@ import { getAllEssays } from '@/lib/writing';
 export default function HomePage() {
   const featured = projects.filter((p) => p.featured);
   const essays = getAllEssays().slice(0, 3);
+  const [primaryAction, secondaryAction] = siteConfig.hero.actions;
 
   return (
     <GridFrame
@@ -23,25 +24,52 @@ export default function HomePage() {
         <SectionMarker index={1} label="Introduction" />
         <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
           <div>
-            <h1 className="mb-8 uppercase">{siteConfig.tagline}</h1>
-            <p className="mb-6 max-w-prose text-[17px] leading-relaxed">
-              {siteConfig.hero.subhead}
-            </p>
-            <p className="mb-10 max-w-prose text-[17px] leading-relaxed">
-              {siteConfig.hero.secondary}
-            </p>
-            <Link
-              href="/work"
-              className="label group inline-flex items-center gap-3 bg-ink-blue px-6 py-3.5 text-paper transition-transform duration-micro ease-enter hover:-translate-y-0.5"
-            >
-              View the work
-              <span
-                aria-hidden="true"
-                className="text-accent transition-transform duration-micro ease-enter group-hover:translate-x-1"
+            {/* Sentence case at --display-l, not the global --display-xl caps:
+                each line is one whole sentence, and at xl in caps they wrap
+                mid-sentence into four lines and push the actions off-screen. */}
+            <h1 className="mb-8 text-[length:var(--display-l)]">
+              {siteConfig.hero.headline.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
+            </h1>
+            {siteConfig.hero.body.map((paragraph, i) => (
+              <p
+                key={i}
+                className={`max-w-prose text-[17px] leading-relaxed ${
+                  i === siteConfig.hero.body.length - 1 ? 'mb-10' : 'mb-6'
+                }`}
               >
-                &rarr;
-              </span>
-            </Link>
+                {paragraph}
+              </p>
+            ))}
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+              <Link
+                href={primaryAction.href}
+                className="label group inline-flex items-center gap-3 bg-ink-blue px-6 py-3.5 text-paper transition-transform duration-micro ease-enter hover:-translate-y-0.5"
+              >
+                {primaryAction.label}
+                <span
+                  aria-hidden="true"
+                  className="text-accent transition-transform duration-micro ease-enter group-hover:translate-x-1"
+                >
+                  &rarr;
+                </span>
+              </Link>
+              <Link
+                href={secondaryAction.href}
+                className="label group inline-flex items-center gap-3 border-b border-rule py-3.5 transition-colors duration-micro ease-enter hover:border-ink-blue"
+              >
+                {secondaryAction.label}
+                <span
+                  aria-hidden="true"
+                  className="text-accent transition-transform duration-micro ease-enter group-hover:translate-x-1"
+                >
+                  &rarr;
+                </span>
+              </Link>
+            </div>
             <p className="label mt-10 text-muted">Curiosity to clarity</p>
           </div>
 

@@ -19,12 +19,12 @@ export default function AboutPage() {
         <SectionMarker index={3} label="Philosophy" />
         <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
           <div>
-            <h1 className="mb-8 uppercase">{siteConfig.hero.headline}</h1>
+            <h1 className="mb-8 uppercase">{siteConfig.about.headline}</h1>
             <p className="mb-6 max-w-prose text-[17px] leading-relaxed">
-              {siteConfig.hero.subhead}
+              {siteConfig.about.subhead}
             </p>
             <p className="mb-10 max-w-prose text-[17px] leading-relaxed">
-              {siteConfig.hero.secondary}
+              {siteConfig.about.secondary}
             </p>
             <Link
               href="/work"
