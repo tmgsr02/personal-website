@@ -33,7 +33,12 @@ export default function HomePage() {
             {/* Sentence case at --display-l, not the global --display-xl caps:
                 each line is one whole sentence, and at xl in caps they wrap
                 mid-sentence into four lines and push the actions off-screen. */}
-            <h1 data-intro-arrival="heading" data-intro-heading tabIndex={-1} className="mb-8 text-[length:var(--display-l)]">
+            {/* focus:outline-none — OpeningIntro moves focus here when the
+                intro ends, so keyboard and screen-reader users land on the
+                page heading. The heading is not interactive and not in the
+                tab order (tabIndex -1), so it needs no focus ring; without
+                this the global accent :focus-visible outline boxes it. */}
+            <h1 data-intro-arrival="heading" data-intro-heading tabIndex={-1} className="mb-8 text-[length:var(--display-l)] focus:outline-none">
               {siteConfig.hero.headline.map((line) => (
                 <span key={line} className="block">
                   {line}

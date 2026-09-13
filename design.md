@@ -140,8 +140,9 @@ animation are `aria-hidden`.
 **Chapters — the nav is the table of contents.** Each nav item is a chapter,
 numbered by its position in `chapters` (`src/content/site.ts`):
 `01 Work · 02 Writing · 03 Notes · 04 About · 05 Now · 06 Contact`. The nav
-shows these numbers — at `lg` and up on desktop, because six numbered labels
-overflow the bar at 768px, and always in the mobile drawer.
+itself stays unnumbered — plain labels read cleaner in the bar — so these
+numbers surface only in section markers, and the nav's order is what ties
+them together.
 
 A section marker reads *chapter.section*. The chapter is the route's nav
 position; the section is the marker's position on the page, from 1. Detail
@@ -181,7 +182,7 @@ their width.
 
 ```
 RootLayout (src/app/layout.tsx)
-  TopNav                        name mark left, six numbered chapter links right, accent active marker
+  TopNav                        name mark left, six chapter links right, accent active marker
   main
     <route page>
       GridFrame
@@ -346,10 +347,10 @@ the genuine draw-on — that's where the budget is spent.
   capabilities grid on `/` and `/about`.
 - **`SkylineFooter`** — contact links (Email, LinkedIn, GitHub, Are.na) above
   the full-bleed `toronto-skyline` plate. Lives in the root layout.
-- **`TopNav`** — sticky header with six chapter links rendered from
-  `chapters` in `site.ts`, numbered `01`–`06` (numbers shown at `lg` and up,
-  and always in the mobile drawer below `md` — see §3.2), plus the
-  `ActiveMarker` expand-ring on the active route. Lives in the root layout.
+- **`TopNav`** — sticky header with six unnumbered chapter links rendered
+  from `chapters` in `site.ts` (their order sets every section number — see
+  §3.2), a mobile drawer below `md`, and the `ActiveMarker` expand-ring on
+  the active route. Lives in the root layout.
 - **`mdx-components.tsx`** — heading, paragraph, list, blockquote, code, and
   link styling for essay MDX content.
 

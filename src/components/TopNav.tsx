@@ -6,8 +6,6 @@ import { usePathname } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
 import { DURATION, EASE } from '@/lib/motion';
 import { siteConfig, chapters } from '@/content/site';
-import { chapterNumber } from '@/lib/chapters';
-import { placeNumber } from '@/lib/numbering';
 
 /** The active marker: a ring that expands once from the accent dot. */
 function ActiveMarker() {
@@ -58,14 +56,6 @@ export default function TopNav() {
                 className="label flex items-center gap-2 transition-colors duration-micro ease-enter hover:text-accent"
               >
                 {isActive(link.href) && <ActiveMarker />}
-                {/* Chapter number: nav position is the numbering every
-                    section marker uses (design.md §3.2). lg and up only —
-                    six numbered labels overflow the bar at 768px.
-                    aria-hidden keeps the link's accessible name "Work",
-                    not "01 Work". */}
-                <span aria-hidden="true" className="hidden text-muted lg:inline">
-                  {placeNumber(chapterNumber(link.href))}
-                </span>
                 <span
                   className={
                     isActive(link.href)
@@ -105,9 +95,6 @@ export default function TopNav() {
                   className="label flex items-center gap-2 text-ink-blue"
                 >
                   {isActive(link.href) && <ActiveMarker />}
-                  <span aria-hidden="true" className="text-muted">
-                    {placeNumber(chapterNumber(link.href))}
-                  </span>
                   {link.label}
                 </Link>
               </li>
