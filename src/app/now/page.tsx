@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import GridFrame from '@/components/GridFrame';
 import SectionMarker from '@/components/SectionMarker';
+import { chapterNumber } from '@/lib/chapters';
 import EngravingPlate from '@/components/EngravingPlate';
 import { siteConfig, nowItems } from '@/content/site';
 
@@ -11,7 +12,7 @@ export default function NowPage() {
   return (
     <GridFrame railRight={['WHAT', 'I AM', 'DOING', 'NOW']}>
       <section className="container pb-16 pt-16 md:pt-24">
-        <SectionMarker index={2} label="Now" />
+        <SectionMarker chapter={chapterNumber('/now')} section={1} label="Now" />
         <div className="grid items-center gap-12 md:grid-cols-[3fr_2fr] md:gap-16">
           <div>
             <h1 className="mb-8 uppercase">What I am working on</h1>

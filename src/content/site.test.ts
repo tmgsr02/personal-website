@@ -7,6 +7,7 @@ import {
   capabilities,
   nowItems,
 } from '@/content/site';
+import { itemNumber } from '@/lib/numbering';
 
 describe('site content', () => {
   it('lists the five experience entries from the reference plates', () => {
@@ -55,6 +56,24 @@ describe('site content', () => {
     const ids = fieldNotes.map((n) => n.id);
     expect(ids.length).toBeGreaterThan(0);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('numbers capabilities as three-digit items matching their position', () => {
+    // Items take three digits, places take two — see src/lib/numbering.ts.
+    // Checking against position, not just width, also catches a card that
+    // is reordered without being renumbered.
+    capabilities.forEach((cap, i) => {
+      expect(cap.index).toBe(itemNumber(i + 1));
+    });
+  });
+
+  it('gives every field note a three-digit id', () => {
+    // Note ids render as item counters on /work and /notes, but they also
+    // anchor /notes#<id> links, so they stay stable ids rather than
+    // positions — only the width is enforced.
+    for (const note of fieldNotes) {
+      expect(note.id).toMatch(/^\d{3}$/);
+    }
   });
 
   it('has a now line and at least one now item', () => {

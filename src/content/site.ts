@@ -11,7 +11,23 @@ export const siteConfig = {
   tagline: 'Ideas to systems to impact',
   email: 'hello@migueltwahirwa.com',
 
+  // Home page, section 00 — Introduction. Two display lines, two paragraphs,
+  // two routes out.
   hero: {
+    headline: ['A curious mind.', 'A habit of making.'],
+    body: [
+      'I’m Miguel, a data scientist and creative technologist based in Toronto. I like getting beneath the surface: questioning assumptions, finding connections across disciplines, and imagining how things could work differently.',
+      'I explore those possibilities through data, code, and design, turning ideas into products, experiments, and visual stories. This is where I share what I’m making, what I’m learning, and the questions I’m still working through.',
+    ],
+    actions: [
+      { label: 'Explore my work', href: '/work' },
+      { label: 'More about me', href: '/about' },
+    ],
+  },
+
+  // About page, section 04.1 — Philosophy. Kept separate from the hero so the
+  // two pages stop sharing one set of paragraphs.
+  about: {
     headline: 'Understand before you optimize',
     subhead:
       'The interesting problems usually begin before the model. What are we actually trying to change, what evidence matters, and what assumptions are worth testing?',
@@ -30,6 +46,22 @@ export const siteConfig = {
 } as const;
 
 /* ======================================================
+   Chapters — the nav, in order
+====================================================== */
+
+// Nav position IS the chapter number: the Nth entry is chapter N, and every
+// section marker on that route and its detail pages reads `0N.x`. Reorder
+// this array and the whole site renumbers. See src/lib/chapters.ts.
+export const chapters = [
+  { href: '/work', label: 'Work' },
+  { href: '/writing', label: 'Writing' },
+  { href: '/notes', label: 'Notes' },
+  { href: '/about', label: 'About' },
+  { href: '/now', label: 'Now' },
+  { href: '/contact', label: 'Contact' },
+] as const;
+
+/* ======================================================
    Capabilities
 ====================================================== */
 
@@ -42,25 +74,25 @@ export interface Capability {
 
 export const capabilities: Capability[] = [
   {
-    index: '01',
+    index: '001',
     title: 'Applied AI + ML',
     description: 'Models and intelligent systems built around real problems.',
     icon: '/engravings/cap-applied-ai.webp',
   },
   {
-    index: '02',
+    index: '002',
     title: 'Product + Analytics',
     description: 'Experimentation, metrics, causal thinking, and decisions.',
     icon: '/engravings/cap-product-analytics.webp',
   },
   {
-    index: '03',
+    index: '003',
     title: 'Data Systems',
     description: 'Reliable analytical foundations from messy, fragmented data.',
     icon: '/engravings/cap-data-systems.webp',
   },
   {
-    index: '04',
+    index: '004',
     title: 'Building',
     description: 'From rough idea to product, prototype, and experience.',
     icon: '/engravings/cap-building.webp',

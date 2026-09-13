@@ -1,10 +1,12 @@
 @import '../styles/tokens.css';
+@import '../styles/opening-intro.css';
 
 /* Bridge next/font's generated variables into the token families.
    Deliberately OUTSIDE @layer base: tokens.css is unlayered, and unlayered
    declarations beat layered ones regardless of source order. Inside a layer
    this block would lose to tokens.css and next/font would never apply. */
 :root {
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
   --font-display: var(--font-display-loaded), 'Didot', Georgia, serif;
   --font-body: var(--font-body-loaded), Georgia, serif;
   --font-mono: var(--font-mono-loaded), 'Courier New', monospace;
@@ -46,7 +48,7 @@
     pointer-events: none;
     z-index: 1;
     opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-image: var(--paper-grain);
   }
 
   h1, h2, h3 {

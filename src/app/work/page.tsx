@@ -2,10 +2,12 @@ import React from 'react';
 import type { Metadata } from 'next';
 import GridFrame from '@/components/GridFrame';
 import SectionMarker from '@/components/SectionMarker';
+import { chapterNumber } from '@/lib/chapters';
 import EngravingPlate from '@/components/EngravingPlate';
 import IndexList from '@/components/IndexList';
 import IndexRow from '@/components/IndexRow';
 import { experience, fieldNotes } from '@/content/site';
+import { itemNumber } from '@/lib/numbering';
 
 export const metadata: Metadata = { title: 'Work' };
 
@@ -13,7 +15,7 @@ export default function WorkPage() {
   return (
     <GridFrame railRight={['PEOPLE', 'PROBLEMS', 'PROGRESS']}>
       <section className="container pb-16 pt-16 md:pt-24">
-        <SectionMarker index={5} label="Experience Index" />
+        <SectionMarker chapter={chapterNumber('/work')} section={1} label="Experience Index" />
         <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
           <div>
             <h1 className="mb-8 uppercase">Work, study, and systems</h1>
@@ -42,7 +44,7 @@ export default function WorkPage() {
               <IndexRow
                 key={entry.slug}
                 id={entry.slug}
-                index={String(i + 1).padStart(2, '0')}
+                index={itemNumber(i + 1)}
                 title={entry.org}
                 subtitle={entry.disciplines.join(' / ')}
                 href={`/work/${entry.slug}`}
@@ -52,7 +54,7 @@ export default function WorkPage() {
         </section>
 
         <section>
-          <SectionMarker index={6} label="Field Notes" />
+          <SectionMarker chapter={chapterNumber('/work')} section={2} label="Field Notes" />
           <IndexList>
             {fieldNotes.map((note) => (
               <IndexRow

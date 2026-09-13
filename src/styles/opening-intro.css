@@ -1,0 +1,70 @@
+/* Only the pre-hydration cover needs CSS. Loader owns the Motion timeline. */
+html[data-opening='pending'] { overflow: hidden; }
+html[data-opening='pending'] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--paper);
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-opening='pending'] { overflow: visible; }
+  html[data-opening='pending'] body::before { display: none; }
+}
+
+/* Typography follows the same real-text shaping in the probe and glyphs. */
+.name-preloader { font-synthesis: none; font-kerning: normal; }
+.np-stage { position: absolute; inset: 0; pointer-events: none; }
+.np-glyph {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-weight: 400;
+  line-height: 1;
+  white-space: pre;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.np-up, .np-it { display: block; line-height: 1; }
+.np-it { position: absolute; top: 0; left: 0; font-style: italic; opacity: 0; }
+.np-probe {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  white-space: pre;
+  line-height: 1;
+  font-weight: 400;
+  visibility: hidden;
+}
+.np-dot, .np-flash { position: absolute; top: 0; left: 0; border-radius: 50%; opacity: 0; pointer-events: none; }
+.np-dot { background: var(--ink-blue); will-change: transform, opacity; }
+.np-flash {
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ink-blue) 24%, transparent), color-mix(in srgb, var(--ink-blue) 8%, transparent) 45%, transparent 72%);
+}
+.np-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: var(--paper-grain);
+}
+.np-skip { opacity: 0; transition: opacity 400ms ease; cursor: pointer; }
+.np-skip.np-on { opacity: 0.7; }
+.np-skip:hover, .np-skip:focus-visible { opacity: 1; }
+@keyframes np-shake {
+  0%, 100% { transform: translate(0, 0); }
+  12% { transform: translate(-4px, 2px); }
+  26% { transform: translate(3px, -3px); }
+  38% { transform: translate(-2px, 4px); }
+  52% { transform: translate(4px, -1px); }
+  66% { transform: translate(-3px, -2px); }
+  80% { transform: translate(2px, 3px); }
+  92% { transform: translate(-2px, -1px); }
+}
+@keyframes np-flash {
+  from { transform: scale(0); opacity: 1; }
+  to { transform: scale(46); opacity: 0; }
+}
+.np-shaking { animation: np-shake 380ms ease-out; }

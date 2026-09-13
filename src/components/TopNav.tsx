@@ -5,16 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
 import { DURATION, EASE } from '@/lib/motion';
-import { siteConfig } from '@/content/site';
-
-const navLinks = [
-  { href: '/work', label: 'Work' },
-  { href: '/writing', label: 'Writing' },
-  { href: '/notes', label: 'Notes' },
-  { href: '/about', label: 'About' },
-  { href: '/now', label: 'Now' },
-  { href: '/contact', label: 'Contact' },
-];
+import { siteConfig, chapters } from '@/content/site';
 
 /** The active marker: a ring that expands once from the accent dot. */
 function ActiveMarker() {
@@ -57,7 +48,7 @@ export default function TopNav() {
         </Link>
 
         <ul className="hidden items-center gap-7 md:flex">
-          {navLinks.map((link) => (
+          {chapters.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
@@ -95,7 +86,7 @@ export default function TopNav() {
           className="border-t border-rule-soft bg-paper pb-6 md:hidden"
         >
           <ul className="container flex flex-col gap-4 pt-4">
-            {navLinks.map((link) => (
+            {chapters.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
