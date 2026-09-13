@@ -6,6 +6,7 @@ import EngravingPlate from '@/components/EngravingPlate';
 import IndexList from '@/components/IndexList';
 import IndexRow from '@/components/IndexRow';
 import { experience, fieldNotes } from '@/content/site';
+import { itemNumber } from '@/lib/numbering';
 
 export const metadata: Metadata = { title: 'Work' };
 
@@ -42,7 +43,7 @@ export default function WorkPage() {
               <IndexRow
                 key={entry.slug}
                 id={entry.slug}
-                index={String(i + 1).padStart(2, '0')}
+                index={itemNumber(i + 1)}
                 title={entry.org}
                 subtitle={entry.disciplines.join(' / ')}
                 href={`/work/${entry.slug}`}

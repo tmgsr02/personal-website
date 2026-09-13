@@ -8,6 +8,7 @@ import IndexList from '@/components/IndexList';
 import IndexRow from '@/components/IndexRow';
 import { siteConfig, capabilities, projects } from '@/content/site';
 import { getAllEssays } from '@/lib/writing';
+import { itemNumber } from '@/lib/numbering';
 
 export default function HomePage() {
   const featured = projects.filter((p) => p.featured);
@@ -105,7 +106,7 @@ export default function HomePage() {
             <IndexRow
               key={project.slug}
               id={project.slug}
-              index={String(i + 1).padStart(2, '0')}
+              index={itemNumber(i + 1)}
               title={project.title}
               subtitle={project.tags.join(' / ')}
               href={`/work/${project.slug}`}
@@ -122,7 +123,7 @@ export default function HomePage() {
             <IndexRow
               key={essay.slug}
               id={essay.slug}
-              index={String(i + 1).padStart(3, '0')}
+              index={itemNumber(i + 1)}
               title={essay.title}
               subtitle={essay.readingTime}
               href={`/writing/${essay.slug}`}

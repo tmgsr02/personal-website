@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { DURATION, EASE } from '@/lib/motion';
+import { placeNumber } from '@/lib/numbering';
 
 interface SectionMarkerProps {
   index: number;
@@ -11,7 +12,7 @@ interface SectionMarkerProps {
 
 export default function SectionMarker({ index, label }: SectionMarkerProps) {
   const reduced = useReducedMotion();
-  const padded = String(index).padStart(2, '0');
+  const padded = placeNumber(index);
   const letters = Array.from(label);
 
   return (

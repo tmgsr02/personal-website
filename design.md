@@ -132,10 +132,21 @@ frame).
 
 ### 3.2 SectionMarker (`src/components/SectionMarker.tsx`)
 
-`03 // PHILOSOPHY` — a zero-padded index, a `//` separator, and a mono caps
-section name, wide-tracked, in `--ink-blue`. Numbered continuously down each
-page. The full label is kept in a `sr-only` span for assistive tech; the
+`03 // PHILOSOPHY` — a two-digit place number, a `//` separator, and a mono
+caps section name, wide-tracked, in `--ink-blue`. Numbered continuously down
+each page. The full label is kept in a `sr-only` span for assistive tech; the
 per-letter spans used for the reveal animation are `aria-hidden`.
+
+**Numbering rule — places take two digits, items take three.** A section
+marker names a *place* and is always two digits (`03`). A counter on a list
+item — an `IndexRow`, a capability card, a field note — counts an *item* and
+is always three digits (`001`). The widths differ on purpose, so a marker and
+the first row beneath it never read as the same number. Both formats come
+from `src/lib/numbering.ts` (`placeNumber`, `itemNumber`), which throw on a
+value that would not fit its width; never zero-pad a counter inline. Field
+note ids are the one hand-written counter, because they also anchor
+`/notes#<id>` links and must stay stable — `site.test.ts` enforces their
+width.
 
 ### 3.3 Page skeleton
 
@@ -291,9 +302,9 @@ the genuine draw-on — that's where the budget is spent.
   `hidden md:block`, `aria-hidden`, rendered by `GridFrame`.
 - **`IndexList`** / **`IndexRow`** — the workhorse list primitive. `IndexList`
   provides `IndexListContext` (`hoveredId`, `setHoveredId`); `IndexRow` takes
-  `id, index, title, subtitle?, href`, renders a zero-padded number, title,
-  optional subtitle, and a trailing accent arrow, and participates in sibling
-  dimming through the shared context.
+  `id, index, title, subtitle?, href`, renders a three-digit item number
+  (`itemNumber()`, see §3.2), title, optional subtitle, and a trailing accent
+  arrow, and participates in row emphasis through the shared context.
 - **`EngravingPlate`** — wraps `next/image` and owns the §5 ink reveal, so no
   page composes that animation by hand. Takes
   `src, alt, width, height, priority?, className?, sizes?`. `sizes` defaults
@@ -301,8 +312,9 @@ the genuine draw-on — that's where the budget is spent.
   `md:grid-cols-2` hero; `/now` and `/notes` pass
   `(max-width: 768px) 100vw, 40vw` since their heroes sit in the `2fr` of a
   `md:grid-cols-[3fr_2fr]` layout instead.
-- **`CapabilityCard`** — index, title, description, and a capability icon
-  plate; used in the 2-up/4-up capabilities grid on `/` and `/about`.
+- **`CapabilityCard`** — a three-digit item number (see §3.2), title,
+  description, and a capability icon plate; used in the 2-up/4-up
+  capabilities grid on `/` and `/about`.
 - **`SkylineFooter`** — contact links (Email, LinkedIn, GitHub, Are.na) above
   the full-bleed `toronto-skyline` plate. Lives in the root layout.
 - **`TopNav`** — sticky header, six links, mobile drawer below `md`, and the

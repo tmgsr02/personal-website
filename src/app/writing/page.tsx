@@ -6,6 +6,7 @@ import EngravingPlate from '@/components/EngravingPlate';
 import IndexList from '@/components/IndexList';
 import IndexRow from '@/components/IndexRow';
 import { getAllEssays } from '@/lib/writing';
+import { itemNumber } from '@/lib/numbering';
 
 export const metadata: Metadata = { title: 'Writing' };
 
@@ -41,7 +42,7 @@ export default function WritingPage() {
             <IndexRow
               key={essay.slug}
               id={essay.slug}
-              index={String(i + 1).padStart(3, '0')}
+              index={itemNumber(i + 1)}
               title={essay.title}
               subtitle={`${essay.date} — ${essay.readingTime}`}
               href={`/writing/${essay.slug}`}

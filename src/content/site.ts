@@ -58,25 +58,25 @@ export interface Capability {
 
 export const capabilities: Capability[] = [
   {
-    index: '01',
+    index: '001',
     title: 'Applied AI + ML',
     description: 'Models and intelligent systems built around real problems.',
     icon: '/engravings/cap-applied-ai.webp',
   },
   {
-    index: '02',
+    index: '002',
     title: 'Product + Analytics',
     description: 'Experimentation, metrics, causal thinking, and decisions.',
     icon: '/engravings/cap-product-analytics.webp',
   },
   {
-    index: '03',
+    index: '003',
     title: 'Data Systems',
     description: 'Reliable analytical foundations from messy, fragmented data.',
     icon: '/engravings/cap-data-systems.webp',
   },
   {
-    index: '04',
+    index: '004',
     title: 'Building',
     description: 'From rough idea to product, prototype, and experience.',
     icon: '/engravings/cap-building.webp',
