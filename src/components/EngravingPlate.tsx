@@ -11,6 +11,8 @@ interface EngravingPlateProps {
   width: number;
   height: number;
   priority?: boolean;
+  /** A parent timeline owns this artwork's entrance. */
+  animateReveal?: boolean;
   className?: string;
   sizes?: string;
 }
@@ -29,6 +31,7 @@ export default function EngravingPlate({
   width,
   height,
   priority = false,
+  animateReveal = true,
   className = '',
   sizes = '(max-width: 768px) 100vw, 60vw',
 }: EngravingPlateProps) {
@@ -46,6 +49,10 @@ export default function EngravingPlate({
       sizes={sizes}
     />
   );
+
+  if (!animateReveal) {
+    return <div className={`relative overflow-hidden ${className}`}>{image}</div>;
+  }
 
   // The element tree is identical whether or not motion is reduced — only
   // the variant VALUES differ. Structurally omitting the inner div/veil

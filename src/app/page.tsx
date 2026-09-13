@@ -20,14 +20,14 @@ export default function HomePage() {
       railRight={['IDEAS', 'PEOPLE', 'SYSTEMS', 'A BRIGHTER TOMORROW']}
     >
       {/* 01 — Hero */}
-      <section className="container pb-20 pt-16 md:pt-24">
+      <section id="introduction" className="container scroll-mt-24 pb-20 pt-16 md:pt-24">
         <SectionMarker index={1} label="Introduction" />
         <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
           <div>
             {/* Sentence case at --display-l, not the global --display-xl caps:
                 each line is one whole sentence, and at xl in caps they wrap
                 mid-sentence into four lines and push the actions off-screen. */}
-            <h1 className="mb-8 text-[length:var(--display-l)]">
+            <h1 data-intro-arrival="heading" data-intro-heading tabIndex={-1} className="mb-8 text-[length:var(--display-l)]">
               {siteConfig.hero.headline.map((line) => (
                 <span key={line} className="block">
                   {line}
@@ -37,6 +37,7 @@ export default function HomePage() {
             {siteConfig.hero.body.map((paragraph, i) => (
               <p
                 key={i}
+                data-intro-arrival="body"
                 className={`max-w-prose text-[17px] leading-relaxed ${
                   i === siteConfig.hero.body.length - 1 ? 'mb-10' : 'mb-6'
                 }`}
@@ -44,7 +45,7 @@ export default function HomePage() {
                 {paragraph}
               </p>
             ))}
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+            <div data-intro-arrival="actions" className="flex flex-wrap items-center gap-x-8 gap-y-4">
               <Link
                 href={primaryAction.href}
                 className="label group inline-flex items-center gap-3 bg-ink-blue px-6 py-3.5 text-paper transition-transform duration-micro ease-enter hover:-translate-y-0.5"
@@ -70,21 +71,24 @@ export default function HomePage() {
                 </span>
               </Link>
             </div>
-            <p className="label mt-10 text-muted">Curiosity to clarity</p>
+            <p data-intro-arrival="caption" className="label mt-10 text-muted">Curiosity to clarity</p>
           </div>
 
-          <EngravingPlate
-            src="/engravings/home-hero.webp"
-            alt=""
-            width={1536}
-            height={1024}
-            priority
-          />
+          <div data-intro-arrival="artwork">
+            <EngravingPlate
+              src="/engravings/home-hero.webp"
+              alt=""
+              width={1536}
+              height={1024}
+              priority
+              animateReveal={false}
+            />
+          </div>
         </div>
       </section>
 
       {/* 02 — Capabilities */}
-      <section className="container border-t border-rule py-20">
+      <section id="capabilities" className="container scroll-mt-24 border-t border-rule py-20">
         <SectionMarker index={2} label="Capabilities" />
         <div className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
           {capabilities.map((capability) => (
@@ -94,7 +98,7 @@ export default function HomePage() {
       </section>
 
       {/* 03 — Selected work */}
-      <section className="container border-t border-rule py-20">
+      <section id="work" className="container scroll-mt-24 border-t border-rule py-20">
         <SectionMarker index={3} label="Selected Work" />
         <IndexList>
           {featured.map((project, i) => (
@@ -111,7 +115,7 @@ export default function HomePage() {
       </section>
 
       {/* 04 — Writing */}
-      <section className="container border-t border-rule py-20">
+      <section id="writing" className="container scroll-mt-24 border-t border-rule py-20">
         <SectionMarker index={4} label="Writing" />
         <IndexList>
           {essays.map((essay, i) => (
