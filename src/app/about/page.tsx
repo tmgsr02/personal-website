@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import GridFrame from '@/components/GridFrame';
 import SectionMarker from '@/components/SectionMarker';
+import { chapterNumber } from '@/lib/chapters';
 import EngravingPlate from '@/components/EngravingPlate';
 import CapabilityCard from '@/components/CapabilityCard';
 import { siteConfig, capabilities } from '@/content/site';
@@ -16,7 +17,7 @@ export default function AboutPage() {
       railRight={['IDEAS', 'PEOPLE', 'SYSTEMS', 'A BRIGHTER TOMORROW']}
     >
       <section className="container pb-16 pt-16 md:pt-24">
-        <SectionMarker index={3} label="Philosophy" />
+        <SectionMarker chapter={chapterNumber('/about')} section={1} label="Philosophy" />
         <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
           <div>
             <h1 className="mb-8 uppercase">{siteConfig.about.headline}</h1>
@@ -52,7 +53,7 @@ export default function AboutPage() {
       </section>
 
       <section className="container border-t border-rule py-20">
-        <SectionMarker index={4} label="Capabilities" />
+        <SectionMarker chapter={chapterNumber('/about')} section={2} label="Capabilities" />
         <div className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
           {capabilities.map((capability) => (
             <CapabilityCard key={capability.index} capability={capability} />

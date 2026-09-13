@@ -19,6 +19,22 @@ export function placeNumber(n: number): string {
   return String(n).padStart(2, '0');
 }
 
+/**
+ * A section marker's number: the two-digit chapter, optionally followed by
+ * a one-digit section — `04` for a home block previewing a whole chapter,
+ * `04.1` for the first section on a chapter page. See src/lib/chapters.ts.
+ */
+export function sectionNumber(chapter: number, section?: number): string {
+  const place = placeNumber(chapter);
+  if (section === undefined) return place;
+  if (!Number.isInteger(section) || section < 1 || section > 9) {
+    throw new RangeError(
+      `sectionNumber: expected a section 1–9, got ${section}`
+    );
+  }
+  return `${place}.${section}`;
+}
+
 export function itemNumber(position: number): string {
   if (!Number.isInteger(position) || position < 1 || position > 999) {
     throw new RangeError(

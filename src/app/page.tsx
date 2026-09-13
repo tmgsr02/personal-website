@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import GridFrame from '@/components/GridFrame';
 import SectionMarker from '@/components/SectionMarker';
+import { chapterNumber } from '@/lib/chapters';
 import EngravingPlate from '@/components/EngravingPlate';
 import CapabilityCard from '@/components/CapabilityCard';
 import IndexList from '@/components/IndexList';
@@ -20,9 +21,13 @@ export default function HomePage() {
       railLeft={['TOR', 'EST', '2024']}
       railRight={['IDEAS', 'PEOPLE', 'SYSTEMS', 'A BRIGHTER TOMORROW']}
     >
-      {/* 01 — Hero */}
+      {/* The home page is the contents page (design.md §3.2): it opens
+          with the cover, 00, and every block after it previews one nav
+          chapter and carries that chapter's number. Keep the blocks in
+          chapter order — src/lib/chapters.test.ts fails otherwise. */}
+      {/* 00 — Introduction, the cover */}
       <section id="introduction" className="container scroll-mt-24 pb-20 pt-16 md:pt-24">
-        <SectionMarker index={1} label="Introduction" />
+        <SectionMarker chapter={chapterNumber('/')} label="Introduction" />
         <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
           <div>
             {/* Sentence case at --display-l, not the global --display-xl caps:
@@ -88,19 +93,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 02 — Capabilities */}
-      <section id="capabilities" className="container scroll-mt-24 border-t border-rule py-20">
-        <SectionMarker index={2} label="Capabilities" />
-        <div className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
-          {capabilities.map((capability) => (
-            <CapabilityCard key={capability.index} capability={capability} />
-          ))}
-        </div>
-      </section>
-
-      {/* 03 — Selected work */}
+      {/* 01 — Selected work, previewing /work */}
       <section id="work" className="container scroll-mt-24 border-t border-rule py-20">
-        <SectionMarker index={3} label="Selected Work" />
+        <SectionMarker chapter={chapterNumber('/work')} label="Selected Work" />
         <IndexList>
           {featured.map((project, i) => (
             <IndexRow
@@ -115,9 +110,9 @@ export default function HomePage() {
         </IndexList>
       </section>
 
-      {/* 04 — Writing */}
+      {/* 02 — Writing, previewing /writing */}
       <section id="writing" className="container scroll-mt-24 border-t border-rule py-20">
-        <SectionMarker index={4} label="Writing" />
+        <SectionMarker chapter={chapterNumber('/writing')} label="Writing" />
         <IndexList>
           {essays.map((essay, i) => (
             <IndexRow
@@ -130,6 +125,16 @@ export default function HomePage() {
             />
           ))}
         </IndexList>
+      </section>
+
+      {/* 04 — Capabilities, previewing /about */}
+      <section id="capabilities" className="container scroll-mt-24 border-t border-rule py-20">
+        <SectionMarker chapter={chapterNumber('/about')} label="Capabilities" />
+        <div className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
+          {capabilities.map((capability) => (
+            <CapabilityCard key={capability.index} capability={capability} />
+          ))}
+        </div>
       </section>
     </GridFrame>
   );

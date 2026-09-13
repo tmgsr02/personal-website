@@ -132,27 +132,56 @@ frame).
 
 ### 3.2 SectionMarker (`src/components/SectionMarker.tsx`)
 
-`03 // PHILOSOPHY` — a two-digit place number, a `//` separator, and a mono
-caps section name, wide-tracked, in `--ink-blue`. Numbered continuously down
-each page. The full label is kept in a `sr-only` span for assistive tech; the
-per-letter spans used for the reveal animation are `aria-hidden`.
+`04.1 // PHILOSOPHY` — a place number, a `//` separator, and a mono caps
+section name, wide-tracked, in `--ink-blue`. The full label is kept in a
+`sr-only` span for assistive tech; the per-letter spans used for the reveal
+animation are `aria-hidden`.
+
+**Chapters — the nav is the table of contents.** Each nav item is a chapter,
+numbered by its position in `chapters` (`src/content/site.ts`):
+`01 Work · 02 Writing · 03 Notes · 04 About · 05 Now · 06 Contact`. The nav
+shows these numbers — at `lg` and up on desktop, because six numbered labels
+overflow the bar at 768px, and always in the mobile drawer.
+
+A section marker reads *chapter.section*. The chapter is the route's nav
+position; the section is the marker's position on the page, from 1. Detail
+pages take their parent's chapter, so `/work/wesco` reads `01.x` — matching
+the nav, which marks Work active there. A number says **where you are, not
+where the content came from**: Field Notes on `/work` is `01.2`, not `03`.
+That one rule means numbers never run backwards on a page, the chapter
+prefix always matches the active nav item, and reordering `chapters`
+renumbers the whole site.
+
+The home page is the **contents page**, chapter `00`. It opens with
+`00 // INTRODUCTION`; every block after it previews one chapter and carries
+that chapter's bare number, in ascending order — `01 // SELECTED WORK`,
+`02 // WRITING`, `04 // CAPABILITIES`. Gaps are expected: a contents page
+highlights, it does not list everything. Adding or moving a home block means
+keeping the blocks in chapter order.
+
+Pages never type a number. Markers take
+`chapter={chapterNumber('/about')} section={1}`, and
+`src/lib/chapters.test.ts` reads every page's source to hold that line: a
+literal `chapter={4}`, a marker borrowing another route's chapter, sections
+out of order, or home blocks out of chapter order all fail the suite.
 
 **Numbering rule — places take two digits, items take three.** A section
-marker names a *place* and is always two digits (`03`). A counter on a list
-item — an `IndexRow`, a capability card, a field note — counts an *item* and
-is always three digits (`001`). The widths differ on purpose, so a marker and
-the first row beneath it never read as the same number. Both formats come
-from `src/lib/numbering.ts` (`placeNumber`, `itemNumber`), which throw on a
-value that would not fit its width; never zero-pad a counter inline. Field
-note ids are the one hand-written counter, because they also anchor
-`/notes#<id>` links and must stay stable — `site.test.ts` enforces their
-width.
+marker names a *place*: a two-digit chapter, optionally followed by a
+one-digit section (`04`, `04.1`). A counter on a list item — an `IndexRow`, a
+capability card, a field note — counts an *item* and is always three digits
+(`001`). The widths differ on purpose, so a marker and the first row beneath
+it never read as the same number. The formats come from
+`src/lib/numbering.ts` (`placeNumber`, `sectionNumber`, `itemNumber`), which
+throw on a value that would not fit its width; never zero-pad a counter
+inline. Field note ids are the one hand-written counter, because they also
+anchor `/notes#<id>` links and must stay stable — `site.test.ts` enforces
+their width.
 
 ### 3.3 Page skeleton
 
 ```
 RootLayout (src/app/layout.tsx)
-  TopNav                        name mark left, six links right, accent active marker
+  TopNav                        name mark left, six numbered chapter links right, accent active marker
   main
     <route page>
       GridFrame
@@ -317,7 +346,9 @@ the genuine draw-on — that's where the budget is spent.
   capabilities grid on `/` and `/about`.
 - **`SkylineFooter`** — contact links (Email, LinkedIn, GitHub, Are.na) above
   the full-bleed `toronto-skyline` plate. Lives in the root layout.
-- **`TopNav`** — sticky header, six links, mobile drawer below `md`, and the
+- **`TopNav`** — sticky header with six chapter links rendered from
+  `chapters` in `site.ts`, numbered `01`–`06` (numbers shown at `lg` and up,
+  and always in the mobile drawer below `md` — see §3.2), plus the
   `ActiveMarker` expand-ring on the active route. Lives in the root layout.
 - **`mdx-components.tsx`** — heading, paragraph, list, blockquote, code, and
   link styling for essay MDX content.
@@ -333,7 +364,7 @@ routes:
 
 | Route | Content |
 |---|---|
-| `/` | Hero, capabilities grid (2-up mobile, 4-up at `lg`), featured work, selected writing |
+| `/` | The contents page (§3.2): introduction `00`, featured work `01`, selected writing `02`, capabilities grid `04` (2-up mobile, 4-up at `lg`) |
 | `/work` | Experience index (Wesco, Chime, Deloitte, Carnegie Mellon, Morehouse) alongside a Field Notes index |
 | `/work/[slug]` | Experience detail or project case study, resolved from the same `experience`/`projects` data in `src/content/site.ts` |
 | `/writing` | Long-form essay index |
@@ -352,7 +383,7 @@ directly as a `FieldNote[]` array in `site.ts` — no MDX loader.
 **Drafts.** An essay whose body is empty after stripping frontmatter and
 whitespace (e.g. a scaffolded file with just a bare `##` heading) is a draft.
 `getAllEssays()` excludes drafts from every index — `/writing`, the home
-page's `04 // WRITING` block, and `generateStaticParams` (so the route
+page's `02 // WRITING` block, and `generateStaticParams` (so the route
 simply isn't built). The file itself is never touched: it stays on disk,
 under version control, and editable — finishing it is enough to make it
 appear everywhere automatically. `toMeta()` also throws at build time if an

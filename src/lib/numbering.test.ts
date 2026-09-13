@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { placeNumber, itemNumber } from './numbering';
+import { placeNumber, sectionNumber, itemNumber } from './numbering';
 
 // The site's one numbering rule: two digits name a PLACE (a chapter or
 // section — `04 // CAPABILITIES`), three digits count an ITEM in a list
@@ -31,5 +31,23 @@ describe('itemNumber', () => {
     expect(() => itemNumber(0)).toThrow();
     expect(() => itemNumber(1000)).toThrow();
     expect(() => itemNumber(2.5)).toThrow();
+  });
+});
+
+describe('sectionNumber', () => {
+  it('writes a bare chapter as two digits', () => {
+    expect(sectionNumber(0)).toBe('00');
+    expect(sectionNumber(4)).toBe('04');
+  });
+
+  it('appends a one-digit section to the chapter', () => {
+    expect(sectionNumber(4, 1)).toBe('04.1');
+    expect(sectionNumber(1, 9)).toBe('01.9');
+  });
+
+  it('refuses a section that is not 1–9', () => {
+    expect(() => sectionNumber(4, 0)).toThrow();
+    expect(() => sectionNumber(4, 10)).toThrow();
+    expect(() => sectionNumber(4, 1.5)).toThrow();
   });
 });

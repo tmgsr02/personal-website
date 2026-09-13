@@ -5,16 +5,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
 import { DURATION, EASE } from '@/lib/motion';
-import { siteConfig } from '@/content/site';
-
-const navLinks = [
-  { href: '/work', label: 'Work' },
-  { href: '/writing', label: 'Writing' },
-  { href: '/notes', label: 'Notes' },
-  { href: '/about', label: 'About' },
-  { href: '/now', label: 'Now' },
-  { href: '/contact', label: 'Contact' },
-];
+import { siteConfig, chapters } from '@/content/site';
+import { chapterNumber } from '@/lib/chapters';
+import { placeNumber } from '@/lib/numbering';
 
 /** The active marker: a ring that expands once from the accent dot. */
 function ActiveMarker() {
@@ -57,7 +50,7 @@ export default function TopNav() {
         </Link>
 
         <ul className="hidden items-center gap-7 md:flex">
-          {navLinks.map((link) => (
+          {chapters.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
@@ -65,6 +58,14 @@ export default function TopNav() {
                 className="label flex items-center gap-2 transition-colors duration-micro ease-enter hover:text-accent"
               >
                 {isActive(link.href) && <ActiveMarker />}
+                {/* Chapter number: nav position is the numbering every
+                    section marker uses (design.md §3.2). lg and up only —
+                    six numbered labels overflow the bar at 768px.
+                    aria-hidden keeps the link's accessible name "Work",
+                    not "01 Work". */}
+                <span aria-hidden="true" className="hidden text-muted lg:inline">
+                  {placeNumber(chapterNumber(link.href))}
+                </span>
                 <span
                   className={
                     isActive(link.href)
@@ -95,7 +96,7 @@ export default function TopNav() {
           className="border-t border-rule-soft bg-paper pb-6 md:hidden"
         >
           <ul className="container flex flex-col gap-4 pt-4">
-            {navLinks.map((link) => (
+            {chapters.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
@@ -104,6 +105,9 @@ export default function TopNav() {
                   className="label flex items-center gap-2 text-ink-blue"
                 >
                   {isActive(link.href) && <ActiveMarker />}
+                  <span aria-hidden="true" className="text-muted">
+                    {placeNumber(chapterNumber(link.href))}
+                  </span>
                   {link.label}
                 </Link>
               </li>

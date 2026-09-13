@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import GridFrame from '@/components/GridFrame';
 import SectionMarker from '@/components/SectionMarker';
+import { chapterNumber } from '@/lib/chapters';
 import EngravingPlate from '@/components/EngravingPlate';
 import IndexList from '@/components/IndexList';
 import IndexRow from '@/components/IndexRow';
@@ -16,7 +17,7 @@ export default function WritingPage() {
   return (
     <GridFrame railRight={['EXPLORATION', 'FUELS', 'CLARITY']}>
       <section className="container pb-16 pt-16 md:pt-24">
-        <SectionMarker index={1} label="Writing" />
+        <SectionMarker chapter={chapterNumber('/writing')} section={1} label="Writing" />
         <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
           <div>
             <h1 className="mb-8 uppercase">Thinking out loud</h1>
@@ -36,7 +37,7 @@ export default function WritingPage() {
       </section>
 
       <section className="container border-t border-rule py-20">
-        <SectionMarker index={2} label="Essays" />
+        <SectionMarker chapter={chapterNumber('/writing')} section={2} label="Essays" />
         <IndexList>
           {essays.map((essay, i) => (
             <IndexRow

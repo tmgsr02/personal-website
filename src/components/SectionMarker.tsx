@@ -3,21 +3,30 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { DURATION, EASE } from '@/lib/motion';
-import { placeNumber } from '@/lib/numbering';
+import { sectionNumber } from '@/lib/numbering';
 
 interface SectionMarkerProps {
-  index: number;
+  /** The route's chapter — always `chapterNumber('<route>')`, never a
+   *  literal. See design.md §3.2. */
+  chapter: number;
+  /** Position on the page, from 1. Omitted only on home blocks, which
+   *  stand for a whole chapter. */
+  section?: number;
   label: string;
 }
 
-export default function SectionMarker({ index, label }: SectionMarkerProps) {
+export default function SectionMarker({
+  chapter,
+  section,
+  label,
+}: SectionMarkerProps) {
   const reduced = useReducedMotion();
-  const padded = placeNumber(index);
+  const number = sectionNumber(chapter, section);
   const letters = Array.from(label);
 
   return (
     <p className="label mb-8 flex items-center gap-3">
-      <span>{padded}</span>
+      <span>{number}</span>
       <span aria-hidden="true" className="text-rule">{'//'}</span>
       {/* The full label stays readable to assistive tech; the per-letter
           spans are decorative sequencing only. */}

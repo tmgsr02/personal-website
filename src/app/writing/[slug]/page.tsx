@@ -5,6 +5,7 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import type { Metadata } from 'next';
 import GridFrame from '@/components/GridFrame';
 import SectionMarker from '@/components/SectionMarker';
+import { chapterNumber } from '@/lib/chapters';
 import { getAllEssays, getEssayBySlug } from '@/lib/writing';
 import { mdxComponents } from '@/components/mdx-components';
 
@@ -40,7 +41,7 @@ export default async function EssayPage({ params }: PageProps) {
   return (
     <GridFrame>
       <article className="container pb-20 pt-16 md:pt-24">
-        <SectionMarker index={1} label="Essay" />
+        <SectionMarker chapter={chapterNumber('/writing')} section={1} label="Essay" />
         <h1 className="mb-6">{essay.title}</h1>
         <p className="label mb-14 text-muted">
           {essay.date} — {essay.readingTime}

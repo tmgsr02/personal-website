@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import GridFrame from '@/components/GridFrame';
 import SectionMarker from '@/components/SectionMarker';
+import { chapterNumber } from '@/lib/chapters';
 import EngravingPlate from '@/components/EngravingPlate';
 import { fieldNotes } from '@/content/site';
 
@@ -11,7 +12,7 @@ export default function NotesPage() {
   return (
     <GridFrame railRight={['SMALL', 'EXPERIMENTS', 'BIGGER', 'PERSPECTIVE']}>
       <section className="container pb-16 pt-16 md:pt-24">
-        <SectionMarker index={6} label="Field Notes" />
+        <SectionMarker chapter={chapterNumber('/notes')} section={1} label="Field Notes" />
         <div className="grid items-center gap-12 md:grid-cols-[3fr_2fr] md:gap-16">
           <div>
             <h1 className="mb-8 uppercase">Small experiments</h1>

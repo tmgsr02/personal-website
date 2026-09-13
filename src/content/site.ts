@@ -11,7 +11,7 @@ export const siteConfig = {
   tagline: 'Ideas to systems to impact',
   email: 'hello@migueltwahirwa.com',
 
-  // Home page, section 01 — Introduction. Two display lines, two paragraphs,
+  // Home page, section 00 — Introduction. Two display lines, two paragraphs,
   // two routes out.
   hero: {
     headline: ['A curious mind.', 'A habit of making.'],
@@ -25,7 +25,7 @@ export const siteConfig = {
     ],
   },
 
-  // About page, section 03 — Philosophy. Kept separate from the hero so the
+  // About page, section 04.1 — Philosophy. Kept separate from the hero so the
   // two pages stop sharing one set of paragraphs.
   about: {
     headline: 'Understand before you optimize',
@@ -44,6 +44,22 @@ export const siteConfig = {
     arena: 'https://are.na/migueltwahirwa',
   },
 } as const;
+
+/* ======================================================
+   Chapters — the nav, in order
+====================================================== */
+
+// Nav position IS the chapter number: the Nth entry is chapter N, and every
+// section marker on that route and its detail pages reads `0N.x`. Reorder
+// this array and the whole site renumbers. See src/lib/chapters.ts.
+export const chapters = [
+  { href: '/work', label: 'Work' },
+  { href: '/writing', label: 'Writing' },
+  { href: '/notes', label: 'Notes' },
+  { href: '/about', label: 'About' },
+  { href: '/now', label: 'Now' },
+  { href: '/contact', label: 'Contact' },
+] as const;
 
 /* ======================================================
    Capabilities

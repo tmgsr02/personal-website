@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import GridFrame from '@/components/GridFrame';
 import SectionMarker from '@/components/SectionMarker';
+import { chapterNumber } from '@/lib/chapters';
 import { experience, projects } from '@/content/site';
 
 export async function generateStaticParams() {
@@ -40,7 +41,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
   return (
     <GridFrame>
       <article className="container pb-20 pt-16 md:pt-24">
-        <SectionMarker index={1} label={entry ? 'Experience' : 'Case Study'} />
+        <SectionMarker chapter={chapterNumber('/work')} section={1} label={entry ? 'Experience' : 'Case Study'} />
 
         {entry && (
           <>
@@ -54,7 +55,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
 
             {entry.projects.length > 0 && (
               <section className="border-t border-rule pt-12">
-                <SectionMarker index={2} label="Projects" />
+                <SectionMarker chapter={chapterNumber('/work')} section={2} label="Projects" />
                 <ul className="grid gap-8 md:grid-cols-2">
                   {entry.projects.map((projectSlug) => {
                     const p = projects.find((x) => x.slug === projectSlug);
